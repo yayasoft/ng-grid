@@ -13,7 +13,6 @@
       self.grid = gridClassFactory.createGrid($scope.uiGrid);
       $elm.addClass('grid' + self.grid.id);
 
-
       //add optional reference to externalScopes function to controller
       //so it can be retrieved in lower elements that have isolate scope
       self.getExternalScopes = $scope.getExternalScopes;
@@ -22,11 +21,13 @@
 
       //all properties of grid are available on scope
       $scope.grid = self.grid;
-
       // Function to pre-compile all the cell templates when the column definitions change
       function preCompileCellTemplates(columns) {
         $log.info('pre-compiling cell templates');
-        columns.forEach(function (col) {
+        columns.forEach(function (col, index) {
+          if ($scope.grid.options.showRowHeader && index === 0) {
+            return;
+          }
           var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
 
           var compiledElementFn = $compile(html);

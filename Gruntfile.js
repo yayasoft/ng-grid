@@ -49,7 +49,7 @@ module.exports = function(grunt) {
 
         // Templates
         ngtemplates: {
-            'uigrid': {
+            'uigrid': { 
                 // Look for templates in src and in feature template directories
                 src: ['src/templates/**/*.html', 'src/features/*/templates/**/*.html'],
                 dest: '.tmp/template.js',

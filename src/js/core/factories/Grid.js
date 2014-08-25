@@ -160,13 +160,18 @@ angular.module('ui.grid')
     $log.debug('buildColumns');
     var self = this;
     var builderPromises = [];
+    var offset = 1;
+    if (self.options.showRowHeader) {
+      var col = new GridColumn({name: "", enableSorting: false, pinnable: true}, 0, self);
+      self.columns.push(col);
+    }
 
     self.options.columnDefs.forEach(function (colDef, index) {
       self.preprocessColDef(colDef);
       var col = self.getColumn(colDef.name);
 
       if (!col) {
-        col = new GridColumn(colDef, index, self);
+        col = new GridColumn(colDef, index + offset, self);
         self.columns.push(col);
       }
       else {
