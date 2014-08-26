@@ -102,10 +102,9 @@
            *  @ngdoc object
            *  @name enableCellEdit
            *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @description Default value that colDefs will take if their enableCellEdit is undefined. Defaults to true.
+           *  @description If defined, it will be the default value that colDefs will take if their enableCellEdit is
+           *  not defined. Defaults to undefined.
            */
-            //default option to true unless it was explicitly set to false
-          gridOptions.enableCellEdit = gridOptions.enableCellEdit !== false;
 
           /**
            *  @ngdoc object
@@ -165,7 +164,8 @@
            *  @propertyOf  ui.grid.edit.api:ColDef
            *  @description enable editing on column
            */
-          colDef.enableCellEdit = colDef.enableCellEdit === undefined ? gridOptions.enableCellEdit : colDef.enableCellEdit;
+          colDef.enableCellEdit = colDef.enableCellEdit === undefined ? (gridOptions.enableCellEdit === undefined ?
+            (colDef.type !== 'object'):gridOptions.enableCellEdit) : colDef.enableCellEdit;
 
           /**
            *  @ngdoc object
@@ -517,15 +517,25 @@
                   });
                 });
 
-                $scope.stopEdit = function (evt) {
+               
+               $scope.deepEdit = false;
+               
+               $scope.stopEdit = function (evt) {
                   if ($scope.inputForm && !$scope.inputForm.$valid) {
+               
+
                     evt.stopPropagation();
                     $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
                   }
                   else {
                     $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
                   }
+                  $scope.deepEdit = false;
                 };
+
+                $elm.on('click', function (evt) {
+                  $scope.deepEdit = true;
+                });
 
                 $elm.on('keydown', function (evt) {
                   switch (evt.keyCode) {
@@ -536,6 +546,23 @@
                     case uiGridConstants.keymap.ENTER: // Enter (Leave Field)
                       $scope.stopEdit(evt);
                       break;
+                  }
+
+                  if ($scope.deepEdit) {
+                    switch (evt.keyCode) {
+                      case uiGridConstants.keymap.LEFT:
+                        evt.stopPropagation();
+                        break;
+                      case uiGridConstants.keymap.RIGHT:
+                        evt.stopPropagation();
+                        break;
+                      case uiGridConstants.keymap.UP:
+                        evt.stopPropagation();
+                        break;
+                      case uiGridConstants.keymap.DOWN:
+                        evt.stopPropagation();
+                        break;
+                    }
                   }
 
                   return true;

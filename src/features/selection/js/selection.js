@@ -38,6 +38,11 @@
       var service = {
 
         initializeGrid: function (grid) {
+
+          //add feature namespace and any properties to grid for needed state
+          grid.selection = {};
+          grid.selection.lastSelectedRow = null;
+
           service.defaultGridOptions(grid.options);
 
           /**
@@ -196,6 +201,9 @@
             service.clearSelectedRows(grid);
           }
           row.isSelected = !selected;
+          if (row.isSelected === true) {
+            grid.selection.lastSelectedRow = row;
+          }
           grid.api.selection.raise.rowSelectionChanged(row);
         },
           /**
@@ -366,6 +374,7 @@
             }
 
             function registerRowSelectionEvents() {
+<<<<<<< HEAD
                 $elm.on('click', function (evt) {
                     if (evt.shiftKey) {
                         uiGridSelectionService.shiftSelect($scope.grid, $scope.row, $scope.grid.options.multiSelect);
@@ -376,6 +385,18 @@
                     }
                     $scope.$apply();
                 });
+=======
+              $elm.on('click', function (evt) {
+                if (evt.shiftKey) {
+                  uiGridSelectionService.shiftSelect($scope.grid, $scope.row, $scope.grid.options.multiSelect);
+
+                }
+                else {
+                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect);
+                }
+                $scope.$apply();
+              });
+>>>>>>> 5a157f486002447d7f22a7e4a280bbba7738c634
             }
           }
         };

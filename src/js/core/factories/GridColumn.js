@@ -202,6 +202,26 @@ angular.module('ui.grid')
       return self.grid.renderContainers[containerId];
     };
 
+    /**
+     * @ngdoc function
+     * @name showColumn
+     * @methodOf ui.grid.class:GridColumn
+     * @description Makes the column visible by setting colDef.visible = true
+     */
+    GridColumn.prototype.showColumn = function() {
+        this.colDef.visible = true;
+    };
+
+    /**
+     * @ngdoc function
+     * @name hideColumn
+     * @methodOf ui.grid.class:GridColumn
+     * @description Hides the column by setting colDef.visible = false
+     */
+    GridColumn.prototype.hideColumn = function() {
+        this.colDef.visible = false;
+    };
+
     return GridColumn;
 }]);
 

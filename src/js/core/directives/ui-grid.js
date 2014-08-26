@@ -44,7 +44,7 @@
           self.grid.options.columnDefs = value;
           self.grid.buildColumns()
             .then(function(){
-              preCompileCellTemplates($scope.grid.columns);
+              self.grid.preCompileCellTemplates();
 
               self.refreshCanvas(true);
             });
@@ -73,7 +73,7 @@
           self.grid.buildColumns()
             .then(function(){
 
-              preCompileCellTemplates($scope.grid.columns);
+              self.grid.preCompileCellTemplates();
 
               self.refreshCanvas(true);
             });
@@ -92,7 +92,7 @@
             }
             promises.push(self.grid.buildColumns()
               .then(function() {
-                preCompileCellTemplates($scope.grid.columns);}
+                self.grid.preCompileCellTemplates();}
             ));
           }
           $q.all(promises).then(function() {
