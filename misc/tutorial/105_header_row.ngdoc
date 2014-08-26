@@ -20,9 +20,10 @@ This will enable checkbox or expandable button inside the ngGrid in each row.
     app.controller('MainCtrl', ['$scope', 'i18nService', '$http', function ($scope, i18nService, $http) {
 
         $scope.gridOptions = {};
+        $scope.gridOptions.showRowHeader = true;
  
         $scope.gridOptions.columnDefs = [
-          { name:'id', width:50, pinned: true },
+          { name:'id', width:50 },
           { name:'name', width:100 },
           { name:'age', width:100  },
           { name:'address.street', width:150  },

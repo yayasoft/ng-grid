@@ -24,7 +24,7 @@ angular.module('ui.grid').directive('uiGridRowHeaderCell', ['$compile', '$log', 
         },
         post: function($scope, $elm, $attrs) {
           $elm.on('click', function (){
-            console.log("Clicked");
+            $log.info("Clicked");
             isExpanded = !isExpanded;
           });
         }

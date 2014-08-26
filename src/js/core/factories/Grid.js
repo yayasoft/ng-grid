@@ -195,7 +195,10 @@ angular.module('ui.grid')
  */
   Grid.prototype.preCompileCellTemplates = function() {
         $log.info('pre-compiling cell templates');
-        this.columns.forEach(function (col) {
+        this.columns.forEach(function (col, index) {
+          if (col.grid.options.showRowHeader && index === 0) {
+            return;
+          }
           var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
 
           var compiledElementFn = $compile(html);

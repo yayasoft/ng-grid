@@ -374,7 +374,6 @@
             }
 
             function registerRowSelectionEvents() {
-<<<<<<< HEAD
                 $elm.on('click', function (evt) {
                     if (evt.shiftKey) {
                         uiGridSelectionService.shiftSelect($scope.grid, $scope.row, $scope.grid.options.multiSelect);
@@ -385,18 +384,6 @@
                     }
                     $scope.$apply();
                 });
-=======
-              $elm.on('click', function (evt) {
-                if (evt.shiftKey) {
-                  uiGridSelectionService.shiftSelect($scope.grid, $scope.row, $scope.grid.options.multiSelect);
-
-                }
-                else {
-                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect);
-                }
-                $scope.$apply();
-              });
->>>>>>> 5a157f486002447d7f22a7e4a280bbba7738c634
             }
           }
         };
