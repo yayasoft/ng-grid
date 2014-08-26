@@ -19,43 +19,42 @@ This will enable checkbox or expandable button inside the ngGrid in each row.
 
     app.controller('MainCtrl', ['$scope', 'i18nService', '$http', function ($scope, i18nService, $http) {
 
-        $scope.gridOptions = {
-                showRowHeader: true,
-                rowHeaderCellTemplate: '<div><button>Expand</button></div>',
-                columnDefs: [
-                  { field: 'name' },
-                  { field: 'gender' },
-                  { field: 'company', enableFiltering: false  }
-                ]
-              };
-
-              $http.get('/data/100.json')
-                .success(function(data) {
-                  $scope.gridOptions.data = data;
-                });
+        $scope.gridOptions = {};
+ 
+        $scope.gridOptions.columnDefs = [
+          { name:'id', width:50, pinned: true },
+          { name:'name', width:100 },
+          { name:'age', width:100  },
+          { name:'address.street', width:150  },
+          { name:'address.city', width:150 },
+          { name:'address.state', width:50 },
+          { name:'address.zip', width:50 },
+          { name:'company', width:100 },
+          { name:'email', width:100 },
+          { name:'phone', width:200 },
+          { name:'about', width:300 },
+          { name:'friends[0].name', displayName:'1st friend', width:150 },
+          { name:'friends[1].name', displayName:'2nd friend', width:150 },
+          { name:'friends[2].name', displayName:'3rd friend', width:150 },
+        ];
+       
+        $http.get('/data/500_complex.json')
+          .success(function(data) {
+            $scope.gridOptions.data = data;
+          });
+});
     }]);
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <select ng-model="lang" ng-options="l for l in langs"></select><br>
 
-      <div ui-i18n="{{lang}}">
-         <p>Using attribute:</p>
-         <p ui-t="groupPanel.description"></p>
-         <br/>
-         <p>Using Filter:</p>
-         <p>{{"groupPanel.description" | t}}</p>
-
-         <p>Click the header menu to see language. NOTE: TODO: header text does not change after grid is rendered. </p>
-
-         <div ui-grid="gridOptions" class="grid"></div>
-      </div>
+      <div ui-grid="gridOptions" class="grid" ui-grid-pinning></div>
 
     </div>
   </file>
   <file name="main.css">
     .grid {
-      width: 500px;
+      width: 400px;
       height: 250px;
     }
   </file>

@@ -162,7 +162,7 @@ angular.module('ui.grid')
     var builderPromises = [];
     var offset = 1;
     if (self.options.showRowHeader) {
-      var col = new GridColumn({name: "", enableSorting: false, pinnable: true}, 0, self);
+      var col = new GridColumn({name: "Expand", enableSorting: false, width: 125}, 0, self);
       self.columns.push(col);
     }
 
