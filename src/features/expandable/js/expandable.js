@@ -83,8 +83,8 @@
     }]);
 
   module.directive('uiGridCell',
-    ['$compile', 'uiGridConstants', '$log', '$parse', 'uiGridExpandableService',
-      function ($compile, uiGridConstants, $log, $parse, uiGridExpandableService) {
+    ['$compile', 'uiGridConstants', '$log', '$parse', 'uiGridExpandableService','$timeout',
+      function ($compile, uiGridConstants, $log, $parse, uiGridExpandableService, $timeout) {
         return {
           priority: -200, // run after default uiGridCell directive
           restrict: 'A',
@@ -92,7 +92,9 @@
           link: function ($scope, $elm, $attrs) {
             $elm.on('click',function(evt) {
               console.log('here!!!');
-              uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
+              $timeout(function() {
+                uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
+              });
             });
           }
         };
