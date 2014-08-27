@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: Header Row
+@name Tutorial: Row Header
 @description
 
 This is the first part of creating "Collapsable" ngGrid. 
@@ -10,6 +10,13 @@ User can specify:
 </pre>
 
 This will enable checkbox or expandable button inside the ngGrid in each row.
+
+
+Also user can use custom template for row header cell:
+
+<pre>
+  $scope.gridOptions.rowHeaderCellTemplate = '<input type="button" value="expand">';
+</pre>
 
 
 @example
@@ -38,10 +45,31 @@ This will enable checkbox or expandable button inside the ngGrid in each row.
           { name:'friends[1].name', displayName:'2nd friend', width:150 },
           { name:'friends[2].name', displayName:'3rd friend', width:150 },
         ];
+        $scope.gridOptionsCustom = {};
+        $scope.gridOptionsCustom.showRowHeader = true;
+        $scope.gridOptionsCustom.rowHeaderCellTemplate = '<input type="button" value="expand">';
+ 
+        $scope.gridOptionsCustom.columnDefs = [
+          { name:'id', width:50 },
+          { name:'name', width:100 },
+          { name:'age', width:100  },
+          { name:'address.street', width:150  },
+          { name:'address.city', width:150 },
+          { name:'address.state', width:50 },
+          { name:'address.zip', width:50 },
+          { name:'company', width:100 },
+          { name:'email', width:100 },
+          { name:'phone', width:200 },
+          { name:'about', width:300 },
+          { name:'friends[0].name', displayName:'1st friend', width:150 },
+          { name:'friends[1].name', displayName:'2nd friend', width:150 },
+          { name:'friends[2].name', displayName:'3rd friend', width:150 },
+        ];
        
         $http.get('/data/500_complex.json')
           .success(function(data) {
             $scope.gridOptions.data = data;
+            $scope.gridOptionsCustom.data = data;
           });
 });
     }]);
@@ -50,6 +78,9 @@ This will enable checkbox or expandable button inside the ngGrid in each row.
     <div ng-controller="MainCtrl">
 
       <div ui-grid="gridOptions" class="grid" ui-grid-pinning></div>
+
+      <h3>Custom row header cell template:</h3>
+      <div ui-grid="gridOptionsCustom" class="grid" ui-grid-pinning></div>
 
     </div>
   </file>
