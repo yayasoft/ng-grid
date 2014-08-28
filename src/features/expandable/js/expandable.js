@@ -63,25 +63,27 @@
     ['uiGridExpandableService', '$timeout', '$log', '$compile',
       function (uiGridExpandableService, $timeout, $log, $compile) {
         return {
+          require: '^uiGrid',
           restrict: 'C',
           scope: false,
-          link: function ($scope, $elm, $attrs) {
-            var expendedRowAppended;
+          link: function ($scope, $elm, $attrs, uiGridCtrl) {
+            var expendedRowAppended = false;
+            $scope.grid = uiGridCtrl.grid;
             $elm.on('click', function (evt) {
               $timeout(function () {
                 uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
+                if ($scope.row.isExpanded && !expendedRowAppended) {
+                  /*this html will be read from template file to show hide it I have currently used ng-if
+                   but something else can also be thought about using ng-if would require to enclose template
+                   in something like <div ng-if="row.isExpanded"></div>
+                   */
+                  var rowHtml = "<div ng-if='row.isExpanded' style='height: 80px;width: 100%;float:left;padding-left: 10px;" +
+                    "background-color: #ffffff;'>test</div>";
+                  var expandedRow = $compile(rowHtml)($scope);
+                  $elm.append(expandedRow);
+                  expendedRowAppended = true;
+                }
               });
-              if ($scope.row.isExpanded && !expendedRowAppended) {
-                /*this html will be read from template file to show hide it I have currently used ng-if
-                but something else can also be thought about using ng-if would require to enclose template
-                in something like <div ng-if="row.isExpanded"></div>
-                */
-                var rowHtml = "<div ng-if='row.isExpanded' style='height: 80px;width: 100%;float:left;padding-left: 10px;" +
-                  "background-color: #ffffff;'>test</div>";
-                var expandedRow = $compile(rowHtml)($scope);
-                $elm.append(expandedRow);
-                expendedRowAppended = true;
-              }
             });
           }
         };
