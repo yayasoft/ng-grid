@@ -68,24 +68,38 @@
     }]);
 
   module.directive('uiGridCell',
-    ['uiGridExpandableService', '$timeout', '$log', '$compile',
-      function (uiGridExpandableService, $timeout, $log, $compile) {
+    ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants',
+      function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants) {
         return {
           priority: -100,
           restrict: 'A',
           scope: false,
           link: function ($scope, $elm, $attrs) {
+
+            var expandedRowElement;
+
             $elm.on('click', function (evt) {
               uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
               $timeout(function () {
-                if (!$scope.row.expandedViewGenerated) {
-                  var rowHtml = "<div ng-if='row.isExpanded' style='width: 100%;float:left;'>" +
+                if (!expandedRowElement) {
+                  var rowHtml = "<div ng-if='row.isExpanded' class='test' style='width: 100%;float:left;'>" +
                     $scope.grid.options.rowExpandableTemplateHtml + "</div>";
-                  var expandedRow = $compile(rowHtml)($scope);
-                  $elm.parent().append(expandedRow);
-                  $scope.row.expandedViewGenerated = true;
+                  expandedRowElement = $compile(rowHtml)($scope);
+                  $elm.parent().append(expandedRowElement);
                 }
               });
+            });
+
+            //a few line copied from click above to redraw subgrid at scroll
+            $scope.$on(uiGridConstants.events.GRID_SCROLL, function (evt, retainFocus) {
+              if ($scope.row.isExpanded) {
+                if (!expandedRowElement) {
+                  var rowHtml = "<div ng-if='row.isExpanded' class='test' style='width: 100%;float:left;'>" +
+                    $scope.grid.options.rowExpandableTemplateHtml + "</div>";
+                  expandedRowElement = $compile(rowHtml)($scope);
+                  $elm.parent().append(expandedRowElement);
+                }
+              }
             });
           }
         };
