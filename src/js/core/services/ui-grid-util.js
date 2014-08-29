@@ -761,7 +761,6 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     }
 
     var browser = s.detectBrowser();
-
     var scrollLeft = element.scrollLeft;
 
     var dir = angular.element(element).css('direction');

@@ -25,6 +25,7 @@
       function preCompileCellTemplates(columns) {
         $log.info('pre-compiling cell templates');
         columns.forEach(function (col, index) {
+          // Avoid compiling element if it is a row header cell
           if ($scope.grid.options.showRowHeader && index === 0) {
             return;
           }

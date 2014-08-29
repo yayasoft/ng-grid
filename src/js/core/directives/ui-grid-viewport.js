@@ -38,7 +38,6 @@
 
             if (newScrollLeft !== colContainer.prevScrollLeft) {
               var xDiff = newScrollLeft - colContainer.prevScrollLeft;
-
               var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
               var horizScrollPercentage = newScrollLeft / horizScrollLength;
 

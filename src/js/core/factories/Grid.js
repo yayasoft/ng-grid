@@ -1,8 +1,8 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('Grid', ['$log', '$q', '$compile', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer',
-    function($log, $q, $compile, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer) {
+.factory('Grid', ['$log', '$q', '$compile', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer', 'GridRowHeaderColumn',
+    function($log, $q, $compile, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer, GridRowHeaderColumn) {
 
 /**
    * @ngdoc function
@@ -160,10 +160,12 @@ angular.module('ui.grid')
     $log.debug('buildColumns');
     var self = this;
     var builderPromises = [];
-    var offset = 1;
-    if (self.options.showRowHeader) {
-      var col = new GridColumn({name: "Expand", enableSorting: false, width: 125}, 0, self);
+    var offset = 0;
+
+    if (self.options.showRowHeader){
+      var col = new GridColumn({name: "", width: self.options.rowHeaderWidth ? self.options.rowHeaderWidth : 30, enableColumnMenu: false}, 0, self);
       self.columns.push(col);
+      offset = 1;
     }
 
     self.options.columnDefs.forEach(function (colDef, index) {
@@ -195,10 +197,11 @@ angular.module('ui.grid')
  */
   Grid.prototype.preCompileCellTemplates = function() {
         $log.info('pre-compiling cell templates');
+        var showRowHeader = this.options.showRowHeader;
         this.columns.forEach(function (col, index) {
-          if (col.grid.options.showRowHeader && index === 0) {
-            return;
-          }
+        if (showRowHeader && index === 0){
+          return;
+        }
           var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
 
           var compiledElementFn = $compile(html);

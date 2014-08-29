@@ -400,7 +400,7 @@ module.exports = function(grunt) {
             },
             testserver: {
                 options: {
-                    port: process.env.TEST_PORT || 9999,
+                    port: process.env.TEST_PORT || 9990,
                     base: '<%= dist %>'
                 }
             }
