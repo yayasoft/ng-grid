@@ -29,7 +29,9 @@
           //set gridApi on scope
           $scope.gridApi = gridApi;
           gridApi.expandable.on.rowExpandedStateChanged($scope,function(row){
-            $log.log('row expansion event fired');
+            row.gridOptions = {};
+            row.gridOptions.columnDefs = [ {name:"Id", field:"id"},{name:"Name", field:"name"} ];
+            row.gridOptions.data = row.entity.friends;
           });
         };
 
@@ -48,6 +50,6 @@
     }
   </file>
   <file name="rowExpandableTemplate.html">
-    <div style="background-color:white">{{row.entity.about}}</div>
+    <div ui-grid="row.gridOptions" style="height:200px;margin-left:10px;margin-right:15px"></div>
   </file>
 </example>

@@ -71,12 +71,13 @@
     ['uiGridExpandableService', '$timeout', '$log', '$compile',
       function (uiGridExpandableService, $timeout, $log, $compile) {
         return {
-          restrict: 'C',
+          priority: -100,
+          restrict: 'A',
           scope: false,
           link: function ($scope, $elm, $attrs) {
             $elm.on('click', function (evt) {
+              uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
               $timeout(function () {
-                uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
                 if (!$scope.row.expandedViewGenerated) {
                   var rowHtml = "<div ng-if='row.isExpanded' style='width: 100%;float:left;'>" +
                     $scope.grid.options.rowExpandableTemplateHtml + "</div>";
