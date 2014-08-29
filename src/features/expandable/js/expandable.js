@@ -3,37 +3,50 @@
 
   var module = angular.module('ui.grid.expandable', ['ui.grid']);
 
-  module.service('uiGridExpandableService', [ function () {
-      var service = {
-        initializeGrid: function (grid) {
-          var publicApi = {
-            events: {
-              expandable: {
-                rowExpensionStateChanged: function (scope, row) {
-                }
+  module.service('uiGridExpandableService', ['gridUtil', function (gridUtil) {
+    var service = {
+      initializeGrid: function (grid) {
+        service.defaultGridOptions(grid.options);
+        var publicApi = {
+          events: {
+            expandable: {
+              rowExpandedStateChanged: function (scope, row) {
               }
-            },
-            methods: {
-              expandable: {
-                toggleRowExpansion: function (rowEntity) {
-                  var row = grid.getRow(rowEntity);
-                  if (row !== null) {
-                    service.toggleRowExpansion(grid, row);
-                  }
+            }
+          },
+          methods: {
+            expandable: {
+              toggleRowExpansion: function (rowEntity) {
+                var row = grid.getRow(rowEntity);
+                if (row !== null) {
+                  service.toggleRowExpansion(grid, row);
                 }
               }
             }
-          };
-          grid.api.registerEventsFromObject(publicApi.events);
-          grid.api.registerMethodsFromObject(publicApi.methods);
-        },
-        toggleRowExpansion: function (grid, row) {
-          row.isExpanded = !row.isExpanded;
-          grid.api.expandable.raise.rowExpensionStateChanged(row);
-        }
-      };
-      return service;
-    }]);
+          }
+        };
+        grid.api.registerEventsFromObject(publicApi.events);
+        grid.api.registerMethodsFromObject(publicApi.methods);
+      },
+      toggleRowExpansion: function (grid, row) {
+        row.isExpanded = !row.isExpanded;
+        grid.api.expandable.raise.rowExpandedStateChanged(row);
+      },
+      defaultGridOptions: function (gridOptions) {
+        gridUtil.getTemplate(gridOptions.rowExpandableTemplate)
+          .then(
+          function (template) {
+            gridOptions.rowExpandableTemplateHtml = template;
+          },
+          function (response) {
+            throw new Error("Couldn't fetch/use gridOptions.rowExpandableTemplate '" +
+              gridOptions.rowExpandableTemplate + "'");
+          }
+        );
+      }
+    };
+    return service;
+  }]);
 
   module.directive('uiGridExpandable', ['$log', 'uiGridExpandableService',
     function ($log, uiGridExpandableService) {
@@ -54,34 +67,22 @@
       };
     }]);
 
-  /*
-  the existing uiGridRow directive as specified in ui-grid-row.js is replaced while compiling this I am not able to use it here
-  I have used class="ui-grid-row" (check uiGridViewPort.html) to implement expansion feature
-  some better solution can be thought about
-   */
-  module.directive('uiGridRow',
+  module.directive('uiGridCell',
     ['uiGridExpandableService', '$timeout', '$log', '$compile',
       function (uiGridExpandableService, $timeout, $log, $compile) {
         return {
-          require: '^uiGrid',
           restrict: 'C',
           scope: false,
-          link: function ($scope, $elm, $attrs, uiGridCtrl) {
-            var expendedRowAppended = false;
-            $scope.grid = uiGridCtrl.grid;
+          link: function ($scope, $elm, $attrs) {
             $elm.on('click', function (evt) {
               $timeout(function () {
                 uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
-                if ($scope.row.isExpanded && !expendedRowAppended) {
-                  /*this html will be read from template file to show hide it I have currently used ng-if
-                   but something else can also be thought about using ng-if would require to enclose template
-                   in something like <div ng-if="row.isExpanded"></div>
-                   */
-                  var rowHtml = "<div ng-if='row.isExpanded' style='height: 80px;width: 100%;float:left;padding-left: 10px;" +
-                    "background-color: #ffffff;'>test</div>";
+                if (!$scope.row.expandedViewGenerated) {
+                  var rowHtml = "<div ng-if='row.isExpanded' style='width: 100%;float:left;'>" +
+                    $scope.grid.options.rowExpandableTemplateHtml + "</div>";
                   var expandedRow = $compile(rowHtml)($scope);
-                  $elm.append(expandedRow);
-                  expendedRowAppended = true;
+                  $elm.parent().append(expandedRow);
+                  $scope.row.expandedViewGenerated = true;
                 }
               });
             });
