@@ -76,30 +76,21 @@
           scope: false,
           link: function ($scope, $elm, $attrs) {
 
-            var expandedRowElement;
-
             $elm.on('click', function (evt) {
               uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
               $timeout(function () {
-                if (!expandedRowElement) {
+                if (!$scope.row.expandedHTMLGenerated) {
                   var rowHtml = "<div ng-if='row.isExpanded' class='test' style='width: 100%;float:left;'>" +
                     $scope.grid.options.rowExpandableTemplateHtml + "</div>";
-                  expandedRowElement = $compile(rowHtml)($scope);
+                  var expandedRowElement = $compile(rowHtml)($scope);
                   $elm.parent().append(expandedRowElement);
+                  $scope.row.expandedHTMLGenerated = true;
                 }
               });
             });
 
-            //a few line copied from click above to redraw subgrid at scroll
             $scope.$on(uiGridConstants.events.GRID_SCROLL, function (evt, retainFocus) {
-              if ($scope.row.isExpanded) {
-                if (!expandedRowElement) {
-                  var rowHtml = "<div ng-if='row.isExpanded' class='test' style='width: 100%;float:left;'>" +
-                    $scope.grid.options.rowExpandableTemplateHtml + "</div>";
-                  expandedRowElement = $compile(rowHtml)($scope);
-                  $elm.parent().append(expandedRowElement);
-                }
-              }
+              $scope.row.isExpanded = false;
             });
           }
         };
