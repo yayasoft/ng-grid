@@ -128,7 +128,9 @@
             });
 
             $scope.$on(uiGridConstants.events.GRID_SCROLL, function (evt, retainFocus) {
-              //$scope.row.isExpanded = false;
+              if ($scope.row.isExpanded) {
+                $scope.row.isExpanded = false;
+              }
             });
           }
         };
