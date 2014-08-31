@@ -36,10 +36,20 @@
         };
 
         $scope.gridOptions.rowExpandableTemplate = 'rowExpandableTemplate.html';
+
+        $scope.expandAllRows = function() {
+          $scope.gridApi.expandable.expandAllRows();
+        }
+
+        $scope.collapseAllRows = function() {
+          $scope.gridApi.expandable.collapseAllRows();
+        }
     }]);
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
+      <button ng-click="expandAllRows()">expand all rows</button>
+      <button ng-click="collapseAllRows()">collapse all rows</button>
       <div ui-grid="gridOptions" ui-grid-expandable class="grid"></div>
     </div>
   </file>
@@ -50,6 +60,6 @@
     }
   </file>
   <file name="rowExpandableTemplate.html">
-    <div ui-grid="row.gridOptions" style="height:200px;margin-left:10px;margin-right:15px"></div>
+    <div ui-grid="row.gridOptions" style="height:140px;"></div>
   </file>
 </example>

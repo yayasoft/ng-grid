@@ -21,6 +21,18 @@
                 if (row !== null) {
                   service.toggleRowExpansion(grid, row);
                 }
+              },
+              expandAllRows: function() {
+                angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
+                  row.isExpanded = true;
+                  grid.api.expandable.raise.rowExpandedStateChanged(row);
+                });
+              },
+              collapseAllRows: function() {
+                angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
+                  row.isExpanded = false;
+                  grid.api.expandable.raise.rowExpandedStateChanged(row);
+                });
               }
             }
           }
@@ -67,6 +79,31 @@
       };
     }]);
 
+  module.directive('uiGridExpandableRow',
+  ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants','gridUtil',
+    function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants, gridUtil) {
+      return {
+        replace: false,
+        priority: 0,
+        require: '^uiGrid',
+        scope: false,
+        compile: function () {
+          return {
+            pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+              if(!gridUtil.isNullOrUndefined($scope.grid.options.rowExpandableTemplateHtml)) {
+                gridUtil.getTemplate($scope.grid.options.rowExpandableTemplateHtml).then(function (expandableRowtemplate) {
+                  var expandedRowElement = $compile(expandableRowtemplate)($scope);
+                  $elm.append(expandedRowElement);
+                });
+              }
+            },
+            post: function ($scope, $elm, $attrs, uiGridCtrl) {
+            }
+          };
+        }
+      };
+    }]);
+
   module.directive('uiGridCell',
     ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants',
       function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants) {
@@ -75,10 +112,11 @@
           restrict: 'A',
           scope: false,
           link: function ($scope, $elm, $attrs) {
-
             $elm.on('click', function (evt) {
-              uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
-              $timeout(function () {
+              $timeout(function() {
+                uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
+              });
+              /*$timeout(function () {
                 if (!$scope.row.expandedHTMLGenerated) {
                   var rowHtml = "<div ng-if='row.isExpanded' class='test' style='width: 100%;float:left;'>" +
                     $scope.grid.options.rowExpandableTemplateHtml + "</div>";
@@ -86,11 +124,11 @@
                   $elm.parent().append(expandedRowElement);
                   $scope.row.expandedHTMLGenerated = true;
                 }
-              });
+              });*/
             });
 
             $scope.$on(uiGridConstants.events.GRID_SCROLL, function (evt, retainFocus) {
-              $scope.row.isExpanded = false;
+              //$scope.row.isExpanded = false;
             });
           }
         };

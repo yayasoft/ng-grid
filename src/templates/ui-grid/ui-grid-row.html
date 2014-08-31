@@ -1,2 +1,2 @@
  <div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>
- 
+ <div ui-grid-expandable-row ng-if="row.isExpanded" class="expandableRow" style="float:left;margin-left: 15px;margin-top: 5px;margin-bottom: 5px; width: {{grid.getViewportWidth() - grid.verticalScrollbarWidth - 5}}px"></div>
