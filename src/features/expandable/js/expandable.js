@@ -90,7 +90,7 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-              if(!gridUtil.isNullOrUndefined($scope.grid.options.rowExpandableTemplateHtml)) {
+              if (!gridUtil.isNullOrUndefined($scope.grid.options.rowExpandableTemplateHtml)) {
                 gridUtil.getTemplate($scope.grid.options.rowExpandableTemplateHtml).then(function (expandableRowtemplate) {
                   var expandedRowElement = $compile(expandableRowtemplate)($scope);
                   $elm.append(expandedRowElement);
