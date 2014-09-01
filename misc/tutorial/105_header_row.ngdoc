@@ -9,15 +9,33 @@ User can specify:
   $scope.gridOptions = {rowHeader: true};
 </pre>
 
-This will enable checkbox or expandable button inside the ngGrid in each row.
+to enable header row cell.
 
+UI-Grid allows you to choose what items to represent inside the cell:
 
-Also user can use custom template for row header cell:
+- rowIndex
+- checkbox
+- button
 
 <pre>
-  $scope.gridOptions.rowHeaderCellTemplate = '<input type="button" value="expand">';
+  $scope.gridoOptions.rowHeaderColumnType = ['rowIndex', 'checkbox']; //Array 
+
+  $scope.gridoOptions.rowHeaderColumnType = 'rowIndexs'; // or string
 </pre>
 
+Each of the item can be customized:
+
+<pre>
+  // Template for 'button' type
+  $scope.gridOptions.rowHeaderButtonTemplate = '<input type="button" value="expand" class="MyCustomButton">';
+
+  // Template for 'checkbox' type
+  $scope.gridOptions.rowHeaderCellTemplate = '<input type="checkbox" class="MyCustomCheckbox">';
+
+  //Or custom template 
+
+  $scope.gridOptions.rowHeaderCustomTemplate = '<div class="container"><button class="MyCustomInput'>Open</button></div>';
+</pre>
 
 @example
 <example module="app">
@@ -28,8 +46,7 @@ Also user can use custom template for row header cell:
 
         $scope.gridOptions = {};
         $scope.gridOptions.showRowHeader = true;
-        $scope.gridOptions.rowHeaderWidth = 125;
-        $scope.gridOptions.rowHeaderColumnType = ['rowIndex', 'checkbox'];
+        $scope.gridOptions.rowHeaderColumnType = 'rowIndex';
  
         $scope.gridOptions.columnDefs = [
           { name:'id', width:50 },

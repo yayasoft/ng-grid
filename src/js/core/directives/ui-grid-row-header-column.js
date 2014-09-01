@@ -63,6 +63,7 @@ angular.module('ui.grid').directive('uiGridRowHeaderColumn', ['$compile', '$log'
               template = $scope.grid.options.rowHeaderCustomTemplate;  
             } else {
               template = rowHeaderCellTemplate;
+              $scope.rowIndexOnly = true;
             }
           }
           gridUtil.getTemplate(template)
