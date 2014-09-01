@@ -95,22 +95,28 @@
            *  @ngdoc object
            *  @name ui.grid.edit.api:GridOptions
            *
-           *  @description Options for edit feature
+           *  @description Options for configuring the edit feature
            */
 
           /**
            *  @ngdoc object
            *  @name enableCellEdit
            *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @description If defined, it will be the default value that colDefs will take if their enableCellEdit is
-           *  not defined. Defaults to undefined.
+           *  @propertyOf  ui.grid.class:GridOptions
+           *  @description If defined, sets the default value for the editable flag on each individual colDefs 
+           *  if their individual enableCellEdit configuration is not defined. Defaults to undefined.  
+           *  </br>_requires the edit feature to be enabled_
            */
 
           /**
            *  @ngdoc object
            *  @name cellEditableCondition
            *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @description If specified, either a value or function to be used by all columns before editing.  If falsy, then editing of cell is not allowed
+           *  @propertyOf  ui.grid.class:GridOptions
+           *  @description If specified, either a value or function to be used by all columns before editing.  
+           *  If falsy, then editing of cell is not allowed.
+           *  </br>_requires the edit feature to be enabled_
+           *  @example
            *  <pre>
            *  function($scope){
            *    //use $scope.row.entity and $scope.col.colDef to determine if editing is allowed
@@ -125,15 +131,18 @@
            *  @name editableCellTemplate
            *  @propertyOf  ui.grid.edit.api:GridOptions
            *  @description If specified, cellTemplate to use as the editor for all columns.
-           *  <br/> default to 'ui-grid/cellTextEditor'
+           *  @description If specified, cellTemplate to use as the editor for all columns.  
+           *  <br/> defaults to 'ui-grid/cellTextEditor'
+           *  <br/>_requires the edit feature to be enabled_
            */
 
           /**
            *  @ngdoc object
            *  @name enableCellEditOnFocus
            *  @propertyOf  ui.grid.edit.api:GridOptions
-           *  @description If true, then editor is invoked as soon as cell receives focus. Default false
-           *  <br>!! requires cellNav feature !!
+           *  @propertyOf  ui.grid.class:GridOptions
+           *  @description If true, then editor is invoked as soon as cell receives focus. Default false.
+           *  <br/>_requires cellNav feature and the edit feature to be enabled_
            */
             //enableCellEditOnFocus can only be used if cellnav module is used
           gridOptions.enableCellEditOnFocus = gridOptions.enableCellEditOnFocus === undefined ?
@@ -162,7 +171,9 @@
            *  @ngdoc object
            *  @name enableCellEdit
            *  @propertyOf  ui.grid.edit.api:ColDef
+           *  @propertyOf  ui.grid.class:GridOptions.columnDef
            *  @description enable editing on column
+           *  <br/>_requires the edit feature to be enabled_
            */
           colDef.enableCellEdit = colDef.enableCellEdit === undefined ? (gridOptions.enableCellEdit === undefined ?
             (colDef.type !== 'object'):gridOptions.enableCellEdit) : colDef.enableCellEdit;
@@ -171,7 +182,10 @@
            *  @ngdoc object
            *  @name cellEditableCondition
            *  @propertyOf  ui.grid.edit.api:ColDef
-           *  @description If specified, either a value or function evaluated before editing cell.  If falsy, then editing of cell is not allowed
+           *  @propertyOf  ui.grid.class:GridOptions.columnDef
+           *  @description If specified, either a value or function evaluated before editing cell.  If falsy, then editing of cell is not allowed.
+           *  <br/>_requires the edit feature to be enabled_
+           *  @example 
            *  <pre>
            *  function($scope){
            *    //use $scope.row.entity and $scope.col.colDef to determine if editing is allowed
@@ -185,22 +199,13 @@
            *  @ngdoc object
            *  @name editableCellTemplate
            *  @propertyOf  ui.grid.edit.api:ColDef
-           *  @description cell template to used when editing this column. can be Url or text template
+           *  @propertyOf  ui.grid.class:GridOptions.columnDef
+           *  @description cell template to be used when editing this column. Can be Url or text template
            *  <br/>Defaults to gridOptions.editableCellTemplate
+           *  <br/>_requires the edit feature to be enabled_
            */
           if (colDef.enableCellEdit) {
-            colDef.editableCellTemplate = colDef.editableCellTemplate || gridOptions.editableCellTemplate ||
-              (function(){
-                if (colDef.type) {
-                  switch (colDef.type) {
-                    case 'boolean' :
-                      return 'ui-grid/cellBooleanEditor';
-                    case 'number' :
-                      return 'ui-grid/cellNumberEditor';
-                  }
-                }
-              })() ||
-              'ui-grid/cellTextEditor';
+            colDef.editableCellTemplate = colDef.editableCellTemplate || gridOptions.editableCellTemplate || 'ui-grid/cellEditor';
 
             promises.push(gridUtil.getTemplate(colDef.editableCellTemplate)
               .then(
@@ -217,9 +222,10 @@
            *  @ngdoc object
            *  @name enableCellEditOnFocus
            *  @propertyOf  ui.grid.edit.api:ColDef
+           *  @propertyOf  ui.grid.class:GridOptions.columnDef
            *  @requires ui.grid.cellNav
-           *  @description If true, then editor is invoked as soon as cell receives focus. Default false
-           *  <br>!! requires cellNav feature !!
+           *  @description If true, then editor is invoked as soon as cell receives focus. Default false.
+           *  <br>_requires both the cellNav feature and the edit feature to be enabled_
            */
             //enableCellEditOnFocus can only be used if cellnav module is used
           colDef.enableCellEditOnFocus = colDef.enableCellEditOnFocus === undefined ? gridOptions.enableCellEditOnFocus : colDef.enableCellEditOnFocus;
@@ -321,7 +327,7 @@
    *  Editing Actions.
    *
    *  Binds edit start events to the uiGridCell element.  When the events fire, the gridCell element is appended
-   *  with the columnDef.editableCellTemplate element ('cellTextEditor.html' by default).
+   *  with the columnDef.editableCellTemplate element ('cellEditor.html' by default).
    *
    *  The editableCellTemplate should respond to uiGridEditConstants.events.BEGIN\_CELL\_EDIT angular event
    *  and do the initial steps needed to edit the cell (setfocus on input element, etc).
@@ -414,6 +420,19 @@
               html = $scope.col.editableCellTemplate;
               html = html.replace(uiGridConstants.COL_FIELD, $scope.row.getQualifiedColField($scope.col));
 
+              $scope.inputType = 'text';
+              switch ($scope.col.colDef.type){
+                case 'boolean':
+                  $scope.inputType = 'checkbox';
+                  break;
+                case 'number':
+                  $scope.inputType = 'number';
+                  break;
+                case 'date':
+                  $scope.inputType = 'date';
+                  break;
+              }
+
               var cellElement;
               $scope.$apply(function () {
                   inEdit = true;
@@ -485,9 +504,8 @@
    *  @element div
    *  @restrict A
    *
-   *  @description input editor directive for text fields.
+   *  @description input editor directive for editable fields.
    *  Provides EndEdit and CancelEdit events
-   *  Can be used as a template to develop other editors
    *
    *  Events that end editing:
    *     blur and enter keydown
@@ -496,7 +514,7 @@
    *    - Esc keydown
    *
    */
-  module.directive('uiGridTextEditor',
+  module.directive('uiGridEditor',
     ['uiGridConstants', 'uiGridEditConstants',
       function (uiGridConstants, uiGridEditConstants) {
         return {
@@ -522,8 +540,6 @@
                
                $scope.stopEdit = function (evt) {
                   if ($scope.inputForm && !$scope.inputForm.$valid) {
-               
-
                     evt.stopPropagation();
                     $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
                   }
@@ -572,5 +588,65 @@
           }
         };
       }]);
+
+  /**
+   *  @ngdoc directive
+   *  @name ui.grid.edit.directive:input
+   *  @element input
+   *  @restrict E
+   *
+   *  @description directive to provide binding between input[date] value and ng-model for angular 1.2
+   *  It is similar to input[date] directive of angular 1.3
+   *
+   *  Supported date format for input is 'yyyy-MM-dd'
+   *  The directive will set the $valid property of input element and the enclosing form to false if
+   *  model is invalid date or value of input is entered wrong.
+   *
+   */
+    module.directive('input', ['$filter', function ($filter) {
+      function parseDateString(dateString) {
+        if ('undefined' === typeof dateString || '' === dateString) {
+          return null;
+        }
+        var parts = dateString.split('-');
+        if (3 !== parts.length) {
+          return null;
+        }
+        var year = parseInt(parts[0], 10);
+        var month = parseInt(parts[1], 10);
+        var day = parseInt(parts[2], 10);
+
+        if (month < 1 || year < 1 || day < 1) {
+          return null;
+        }
+        return new Date(year, (month - 1), day);
+      }
+      return {
+        restrict: 'E',
+        require: '?ngModel',
+        link: function (scope, element, attrs, ngModel) {
+
+          if (angular.version.minor === 2 && attrs.type && 'date' === attrs.type && ngModel) {
+
+            ngModel.$formatters.push(function (modelValue) {
+              ngModel.$setValidity(null,(!modelValue || !isNaN(modelValue.getTime())));
+              return $filter('date')(modelValue, 'yyyy-MM-dd');
+            });
+
+            ngModel.$parsers.push(function (viewValue) {
+              if (viewValue && viewValue.length > 0) {
+                var dateValue = parseDateString(viewValue);
+                ngModel.$setValidity(null, (dateValue && !isNaN(dateValue.getTime())));
+                return dateValue;
+              }
+              else {
+                ngModel.$setValidity(null, true);
+                return null;
+              }
+            });
+          }
+        }
+      };
+    }]);
 
 })();

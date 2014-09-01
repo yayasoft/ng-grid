@@ -134,7 +134,8 @@ var uidPrefix = 'uiGrid-';
  *  
  *  @description Grid utility functions
  */
-module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$injector', '$q', function ($log, $window, $document, $http, $templateCache, $timeout, $injector, $q) {
+module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$injector', '$q', 'uiGridConstants',
+  function ($log, $window, $document, $http, $templateCache, $timeout, $injector, $q, uiGridConstants) {
   var s = {
 
     /**
@@ -594,13 +595,13 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         digit = uid[index].charCodeAt(0);
         if (digit === 57 /*'9'*/) {
           uid[index] = 'A';
-          return uid.join('');
+          return uidPrefix + uid.join('');
         }
         if (digit === 90  /*'Z'*/) {
           uid[index] = '0';
         } else {
           uid[index] = String.fromCharCode(digit + 1);
-          return uid.join('');
+          return uidPrefix + uid.join('');
         }
       }
       uid.unshift('0');
@@ -838,6 +839,38 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     else {
       // TODO(c0bra): Handle other browsers? Android? iOS? Opera?
       return scrollLeft;
+    }
+  };
+
+    /**
+     * @ngdoc method
+     * @name preEval
+     * @methodOf ui.grid.service:GridUtil
+     *
+     * @param {string} path Path to evaluate
+     *
+     * @returns {string} A path that is normalized.
+     *
+     * @description
+     * Takes a field path and converts it to bracket notation to allow for special characters in path
+     * @example
+     * <pre>
+     * gridUtil.preEval('property') == 'property'
+     * gridUtil.preEval('nested.deep.prop-erty') = "nested['deep']['prop-erty']"
+     * </pre>
+     */
+  s.preEval = function (path) {
+    var m = uiGridConstants.BRACKET_REGEXP.exec(path);
+    if (m) {
+      return (m[1] ? s.preEval(m[1]) : m[1]) + m[2] + (m[3] ? s.preEval(m[3]) : m[3]);
+    } else {
+      path = path.replace(uiGridConstants.APOS_REGEXP, '\\\'');
+      var parts = path.split(uiGridConstants.DOT_REGEXP);
+      var preparsed = [parts.shift()];    // first item must be var notation, thus skip
+      angular.forEach(parts, function (part) {
+        preparsed.push(part.replace(uiGridConstants.FUNC_REGEXP, '\']$1'));
+      });
+      return preparsed.join('[\'');
     }
   };
 

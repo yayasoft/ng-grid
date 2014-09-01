@@ -25,7 +25,10 @@
            *  @ngdoc object
            *  @name enableColumnResizing
            *  @propertyOf  ui.grid.resizeColumns.api:GridOptions
-           *  @description Enable column resizing <br/>Defaults to true
+           *  @propertyOf  ui.grid.class:GridOptions
+           *  @description Enable column resizing on the entire grid 
+           *  <br/>Defaults to true
+           *  <br/>_requires the column resizing feature to be enabled_
            */
           gridOptions.enableColumnResizing = gridOptions.enableColumnResizing !== false;
 
@@ -50,7 +53,10 @@
            *  @ngdoc object
            *  @name enableColumnResizing
            *  @propertyOf  ui.grid.resizeColumns.api:ColDef
-           *  @description Enable column resizing <br/>Defaults to GridOptions.enableColumnResizing
+           *  @propertyOf  ui.grid.class:GridOptions.columnDef
+           *  @description Enable column resizing on an individual column
+           *  <br/>Defaults to GridOptions.enableColumnResizing
+           *  <br/>_requires column resizing feature to be enabled_
            */
           //default to true unless gridOptions or colDef is explicitly false
           colDef.enableColumnResizing = colDef.enableColumnResizing === undefined ? gridOptions.enableColumnResizing : colDef.enableColumnResizing;

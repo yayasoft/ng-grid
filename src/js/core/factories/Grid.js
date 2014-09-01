@@ -12,67 +12,69 @@ angular.module('ui.grid')
    * @param {object} options Object map of options to pass into the grid. An 'id' property is expected.
    */
   var Grid = function Grid(options) {
-    // Get the id out of the options, then remove it
-    if (options !== undefined && typeof(options.id) !== 'undefined' && options.id) {
-      if (!/^[_a-zA-Z0-9-]+$/.test(options.id)) {
-        throw new Error("Grid id '" + options.id + '" is invalid. It must follow CSS selector syntax rules.');
-      }
+  // Get the id out of the options, then remove it
+  if (options !== undefined && typeof(options.id) !== 'undefined' && options.id) {
+    if (!/^[_a-zA-Z0-9-]+$/.test(options.id)) {
+      throw new Error("Grid id '" + options.id + '" is invalid. It must follow CSS selector syntax rules.');
     }
-    else {
-      throw new Error('No ID provided. An ID must be given when creating a grid.');
-    }
+  }
+  else {
+    throw new Error('No ID provided. An ID must be given when creating a grid.');
+  }
 
-    this.id = options.id;
-    delete options.id;
+  this.id = options.id;
+  delete options.id;
 
-    // Get default options
-    this.options = new GridOptions();
+  // Get default options
+  this.options = new GridOptions();
 
-    // Extend the default options with what we were passed in
-    angular.extend(this.options, options);
+  // Extend the default options with what we were passed in
+  angular.extend(this.options, options);
 
-    this.headerHeight = this.options.headerRowHeight;
-    this.gridHeight = 0;
-    this.gridWidth = 0;
-    this.columnBuilders = [];
-    this.rowBuilders = [];
-    this.rowsProcessors = [];
-    this.columnsProcessors = [];
-    this.styleComputations = [];
-    this.viewportAdjusters = [];
+  this.headerHeight = this.options.headerRowHeight;
+  this.footerHeight = this.options.showFooter === true ? this.options.footerRowHeight : 0;
 
-    // this.visibleRowCache = [];
+  this.gridHeight = 0;
+  this.gridWidth = 0;
+  this.columnBuilders = [];
+  this.rowBuilders = [];
+  this.rowsProcessors = [];
+  this.columnsProcessors = [];
+  this.styleComputations = [];
+  this.viewportAdjusters = [];
 
-    // Set of 'render' containers for this grid, which can render sets of rows
-    this.renderContainers = {};
+  // this.visibleRowCache = [];
 
-    // Create a 
-    this.renderContainers.body = new GridRenderContainer('body', this);
+  // Set of 'render' containers for this grid, which can render sets of rows
+  this.renderContainers = {};
 
-    this.cellValueGetterCache = {};
+  // Create a
+  this.renderContainers.body = new GridRenderContainer('body', this);
 
-    // Cached function to use with custom row templates
-    this.getRowTemplateFn = null;
+  this.cellValueGetterCache = {};
 
-    // Validate options
-    if (!this.options.enableNativeScrolling && !this.options.enableVirtualScrolling) {
-      throw "Either native or virtual scrolling must be enabled.";
-    }
+  // Cached function to use with custom row templates
+  this.getRowTemplateFn = null;
+
+  // Validate options
+  if (!this.options.enableNativeScrolling && !this.options.enableVirtualScrolling) {
+    throw "Either native or virtual scrolling must be enabled.";
+  }
 
 
-    //representation of the rows on the grid.
-    //these are wrapped references to the actual data rows (options.data)
-    this.rows = [];
+  //representation of the rows on the grid.
+  //these are wrapped references to the actual data rows (options.data)
+  this.rows = [];
 
-    //represents the columns on the grid
-    this.columns = [];
+  //represents the columns on the grid
+  this.columns = [];
 
-    //current rows that are rendered on the DOM
-    this.renderedRows = [];
-    this.renderedColumns = [];
+  //current rows that are rendered on the DOM
+  this.renderedRows = [];
+  this.renderedColumns = [];
 
-    this.api = new GridApi(this);
-  };
+  this.api = new GridApi(this);
+};
 
   /**
    * @ngdoc function
@@ -125,6 +127,20 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc function
+   * @name getColDef
+   * @methodOf ui.grid.class:Grid
+   * @description returns a grid colDef for the column name
+   * @param {string} name column.field
+   */
+  Grid.prototype.getColDef = function getColDef(name) {
+    var colDefs = this.options.columnDefs.filter(function (colDef) {
+      return colDef.name === name;
+    });
+    return colDefs.length > 0 ? colDefs[0] : null;
+  };
+
+  /**
+   * @ngdoc function
    * @name assignTypes
    * @methodOf ui.grid.class:Grid
    * @description uses the first row of data to assign colDef.type for any types not defined.
@@ -166,6 +182,15 @@ angular.module('ui.grid')
       var col = new GridColumn({name: "", width: self.options.rowHeader.rowHeaderWidth ? self.options.rowHeader.rowHeaderWidth : 30, enableColumnMenu: false}, 0, self);
       self.columns.push(col);
       offset = 1;
+    }
+
+    // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
+    if (self.columns.length > self.options.columnDefs.length) {
+        self.columns.forEach(function (column, index) {
+            if (!self.getColDef(column.name)) {
+                self.columns.splice(index, 1);
+            }
+        });
     }
 
     self.options.columnDefs.forEach(function (colDef, index) {
@@ -888,7 +913,7 @@ angular.module('ui.grid')
   Grid.prototype.getViewportHeight = function getViewportHeight() {
     var self = this;
 
-    var viewPortHeight = this.gridHeight - this.headerHeight;
+    var viewPortHeight = this.gridHeight - this.headerHeight - this.footerHeight;
 
     // Account for native horizontal scrollbar, if present
     if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
@@ -968,6 +993,10 @@ angular.module('ui.grid')
     // return this.visibleRowCache.length;
     return this.renderContainers.body.visibleRowCache.length;
   };
+
+   Grid.prototype.getVisibleRows = function getVisibleRows() {
+    return this.renderContainers.body.visibleRowCache;
+   };
 
   Grid.prototype.getVisibleColumnCount = function getVisibleColumnCount() {
     // var count = 0;
@@ -1100,6 +1129,7 @@ angular.module('ui.grid')
    *   by this column only
    * @returns {Promise} A resolved promise that supplies the column.
    */
+  
   Grid.prototype.sortColumn = function sortColumn(column, directionOrAdd, add) {
     var self = this,
         direction = null;

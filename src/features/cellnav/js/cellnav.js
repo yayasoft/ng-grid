@@ -278,7 +278,10 @@
            *  @ngdoc object
            *  @name allowCellFocus
            *  @propertyOf  ui.grid.cellNav.api:ColDef
-           *  @description Enable focus on a cell.<br/>Defaults to true
+           *  @propertyOf  ui.grid.class:GridOptions.columnDef
+           *  @description Enable focus on a cell.  
+           *  <br/>Defaults to true
+           *  <br/>_Requires the cell nav feature to be enabled._
            */
           colDef.allowCellFocus = colDef.allowCellFocus === undefined ? true : colDef.allowCellFocus ;
 
