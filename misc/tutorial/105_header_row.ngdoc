@@ -2,11 +2,11 @@
 @name Tutorial: Row Header
 @description
 
-This is the first part of creating "Collapsable" ngGrid. 
+This is the first part of creating "Expandable" ngGrid. 
 
 User can specify:
 <pre>
-  $scope.gridOptions = {rowHeader: true};
+  $scope.gridOptions = {rowHeader: { //rowHeader options }};
 </pre>
 
 to enable header row cell.
@@ -18,23 +18,23 @@ UI-Grid allows you to choose what items to represent inside the cell:
 - button
 
 <pre>
-  $scope.gridoOptions.rowHeaderColumnType = ['rowIndex', 'checkbox']; //Array 
+  $scope.gridOptions.rowHeader.rowHeaderColumnType = ['rowIndex', 'checkbox']; //Array 
 
-  $scope.gridoOptions.rowHeaderColumnType = 'rowIndexs'; // or string
+  $scope.gridOptions.rowHeader.rowHeaderColumnType = 'rowIndexs'; // or string
 </pre>
 
 Each of the item can be customized:
 
 <pre>
   // Template for 'button' type
-  $scope.gridOptions.rowHeaderButtonTemplate = '<input type="button" value="expand" class="MyCustomButton">';
+  $scope.gridOptions.rowHeader.rowHeaderButtonTemplate = '<input type="button" value="expand" class="MyCustomButton">';
 
   // Template for 'checkbox' type
-  $scope.gridOptions.rowHeaderCellTemplate = '<input type="checkbox" class="MyCustomCheckbox">';
+  $scope.gridOptions.rowHeader.rowHeaderCellTemplate = '<input type="checkbox" class="MyCustomCheckbox">';
 
   //Or custom template 
 
-  $scope.gridOptions.rowHeaderCustomTemplate = '<div class="container"><button class="MyCustomInput'>Open</button></div>';
+  $scope.gridOptions.rowHeader.rowHeaderCustomTemplate = '<div class="container"><button class="MyCustomInput'>Open</button></div>';
 </pre>
 
 @example
@@ -45,9 +45,10 @@ Each of the item can be customized:
     app.controller('MainCtrl', ['$scope', 'i18nService', '$http', function ($scope, i18nService, $http) {
 
         $scope.gridOptions = {};
-        $scope.gridOptions.showRowHeader = true;
-        $scope.gridOptions.rowHeaderColumnType = 'rowIndex';
- 
+        $scope.gridOptions.rowHeader = {
+          rowHeaderColumnType: ['rowIndex', 'checkbox'],
+          rowHeaderWidth: 70
+        };
         $scope.gridOptions.columnDefs = [
           { name:'id', width:50 },
           { name:'name', width:100 },
@@ -65,9 +66,11 @@ Each of the item can be customized:
           { name:'friends[2].name', displayName:'3rd friend', width:150 },
         ];
         $scope.gridOptionsCustom = {};
-        $scope.gridOptionsCustom.showRowHeader = true;
-        $scope.gridOptionsCustom.rowHeaderWidth = 70;
-        $scope.gridOptionsCustom.rowHeaderCustomTemplate = '<input type="button" value="expand">';
+        $scope.gridOptionsCustom.rowHeader = {
+          rowHeaderWidth: 50,
+          rowHeaderCustomTemplate: '<input type="button" value="expand">'
+        };
+
  
         $scope.gridOptionsCustom.columnDefs = [
           { name:'id', width:50 },
@@ -97,10 +100,10 @@ Each of the item can be customized:
   <file name="index.html">
     <div ng-controller="MainCtrl">
 
-      <div ui-grid="gridOptions" class="grid" ui-grid-pinning></div>
+      <div ui-grid="gridOptions" class="grid"></div>
 
-      <h3>Custom row header cell template:</h3>
-      <div ui-grid="gridOptionsCustom" class="grid" ui-grid-pinning></div>
+      <h3>Custom row header button template:</h3>
+      <div ui-grid="gridOptionsCustom" class="grid"></div>
 
     </div>
   </file>

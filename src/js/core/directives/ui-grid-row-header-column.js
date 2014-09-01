@@ -8,33 +8,35 @@ angular.module('ui.grid').directive('uiGridRowHeaderColumn', ['$compile', '$log'
     replace: true,
     require: '?^uiGrid',
     scope: {
-      row: '='
+      row: '=',
+      scroll: '='
     },
     compile: function() {
       return {
         pre: function($scope, $elm, $attrs, uiGridCtrl) {
           var showCheckbox = false;
           var showButton = false;
+          var scrollLeft = 0;
           function getColumnType (types) {
             if (types instanceof Array) {
 
               angular.forEach(types, function(type) {
-                if (type === 'checkbox') {
+                if (type === uiGridConstants.rowHeaderTypes.CHECKBOX) {
                   showCheckbox = true;
-                } else if (type === 'rowIndex') {
+                } else if (type === uiGridConstants.rowHeaderTypes.ROW_INDEX) {
                   $scope.showIndex = true;
-                } else if (type === 'button') {
+                } else if (type === uiGridConstants.rowHeaderTypes.BUTTON) {
                   showButton = true;
                 }
               });
             }
             else if (typeof(types) === 'string') {
 
-              if (types === 'checkbox') {
+              if (types === uiGridConstants.rowHeaderTypes.CHECKBOX) {
                 showCheckbox = true;
-              } else if (types === 'rowIndex') {
+              } else if (types === uiGridConstants.rowHeaderTypes.ROW_INDEX) {
                 $scope.showIndex = true;
-              } else if (types === 'button') {
+              } else if (types === uiGridConstants.rowHeaderTypes.BUTTON) {
                 showButton = true;
               }
             } else {
@@ -43,12 +45,12 @@ angular.module('ui.grid').directive('uiGridRowHeaderColumn', ['$compile', '$log'
           }
 
           $scope.grid = uiGridCtrl.grid;
-          $scope.columnType = $scope.grid.options.rowHeaderColumnType;
+          $scope.columnType = $scope.grid.options.rowHeader.rowHeaderColumnType;
           
           getColumnType($scope.columnType);
           
-          var rowHeaderCellTemplate = ($scope.grid.options.rowHeaderCellTemplate) ? $scope.grid.options.rowHeaderCellTemplate : defaultCheckboxTemplate;
-          var rowHeaderButtonTemplate = ($scope.grid.options.rowHeaderButtonTemplate) ? $scope.grid.options.rowHeaderButtonTemplate : defaultButtonTemplate;
+          var rowHeaderCellTemplate = ($scope.grid.options.rowHeader.rowHeaderCellTemplate) ? $scope.grid.options.rowHeader.rowHeaderCellTemplate : defaultCheckboxTemplate;
+          var rowHeaderButtonTemplate = ($scope.grid.options.rowHeader.rowHeaderButtonTemplate) ? $scope.grid.options.rowHeader.rowHeaderButtonTemplate : defaultButtonTemplate;
           
           var template;
 
@@ -59,8 +61,8 @@ angular.module('ui.grid').directive('uiGridRowHeaderColumn', ['$compile', '$log'
           } else if (showCheckbox) {
             template = rowHeaderCellTemplate;
           } else {
-            if ($scope.grid.options.rowHeaderCustomTemplate) {
-              template = $scope.grid.options.rowHeaderCustomTemplate;  
+            if ($scope.grid.options.rowHeader.rowHeaderCustomTemplate) {
+              template = $scope.grid.options.rowHeader.rowHeaderCustomTemplate;  
             } else {
               template = rowHeaderCellTemplate;
               $scope.rowIndexOnly = true;
@@ -72,7 +74,7 @@ angular.module('ui.grid').directive('uiGridRowHeaderColumn', ['$compile', '$log'
 
               var newElm = $compile(template)($scope);
               $elm.append(newElm);
-              $elm.width($scope.grid.options.rowHeaderWidth ? $scope.grid.options.rowHeaderWidth : 30);
+              $elm.width($scope.grid.options.rowHeader.rowHeaderWidth ? $scope.grid.options.rowHeader.rowHeaderWidth : 30);
             });
         },
         post: function($scope, $elm, $attrs) {

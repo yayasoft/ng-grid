@@ -33,7 +33,6 @@
             var newScrollTop = $elm[0].scrollTop;
             // var newScrollLeft = $elm[0].scrollLeft;
             var newScrollLeft = gridUtil.normalizeScrollLeft($elm);
-
             // Handle RTL here
 
             if (newScrollLeft !== colContainer.prevScrollLeft) {

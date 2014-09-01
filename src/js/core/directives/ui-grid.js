@@ -26,7 +26,7 @@
         $log.info('pre-compiling cell templates');
         columns.forEach(function (col, index) {
           // Avoid compiling element if it is a row header cell
-          if ($scope.grid.options.showRowHeader && index === 0) {
+          if (!gridUtil.isNullOrUndefined(self.grid.options.rowHeader) && index === 0) {
             return;
           }
           var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');

@@ -7,7 +7,7 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$log', '$parse',
       return {
         pre: function($scope, $elm, $attrs, uiGridCtrl) {
           function compileTemplate() {
-            if ($scope.col.index === 0 && $scope.grid.options.showRowHeader) {
+            if ($scope.col.index === 0 && !gridUtil.isNullOrUndefined($scope.col.grid.options.rowHeader)) {
               return;
             }
             var compiledElementFn = $scope.col.compiledElementFn;

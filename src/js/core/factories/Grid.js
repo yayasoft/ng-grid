@@ -161,9 +161,9 @@ angular.module('ui.grid')
     var self = this;
     var builderPromises = [];
     var offset = 0;
-
-    if (self.options.showRowHeader){
-      var col = new GridColumn({name: "", width: self.options.rowHeaderWidth ? self.options.rowHeaderWidth : 30, enableColumnMenu: false}, 0, self);
+    $log.info(gridUtil.isNullOrUndefined(this.options.rowHeader));
+    if (!gridUtil.isNullOrUndefined(this.options.rowHeader)) {
+      var col = new GridColumn({name: "", width: self.options.rowHeader.rowHeaderWidth ? self.options.rowHeader.rowHeaderWidth : 30, enableColumnMenu: false}, 0, self);
       self.columns.push(col);
       offset = 1;
     }
@@ -197,7 +197,7 @@ angular.module('ui.grid')
  */
   Grid.prototype.preCompileCellTemplates = function() {
         $log.info('pre-compiling cell templates');
-        var showRowHeader = this.options.showRowHeader;
+        var showRowHeader = !gridUtil.isNullOrUndefined(this.options.rowHeader);
         this.columns.forEach(function (col, index) {
         if (showRowHeader && index === 0){
           return;
