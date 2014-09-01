@@ -90,10 +90,14 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-              if(!gridUtil.isNullOrUndefined($scope.grid.options.rowExpandableTemplateHtml)) {
+              if (!gridUtil.isNullOrUndefined($scope.grid.options.rowExpandableTemplateHtml)) {
                 gridUtil.getTemplate($scope.grid.options.rowExpandableTemplateHtml).then(function (expandableRowtemplate) {
                   var expandedRowElement = $compile(expandableRowtemplate)($scope);
                   $elm.append(expandedRowElement);
+                  if ($elm.css("height")) {
+                    $scope.row.expandedHeight = Number($elm.css("height").slice(0, $elm.css("height").length-2));
+                  }
+                  $scope.grid.refresh();
                 });
               }
             },
@@ -129,7 +133,7 @@
 
             $scope.$on(uiGridConstants.events.GRID_SCROLL, function (evt, retainFocus) {
               if ($scope.row.isExpanded) {
-                $scope.row.isExpanded = false;
+                //$scope.row.isExpanded = false;
               }
             });
           }
