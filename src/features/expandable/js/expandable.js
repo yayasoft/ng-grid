@@ -24,14 +24,16 @@
               },
               expandAllRows: function() {
                 angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
-                  row.isExpanded = true;
-                  grid.api.expandable.raise.rowExpandedStateChanged(row);
+                  if (!row.isExpanded) {
+                    service.toggleRowExpansion(grid, row);
+                  }
                 });
               },
               collapseAllRows: function() {
                 angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
-                  row.isExpanded = false;
-                  grid.api.expandable.raise.rowExpandedStateChanged(row);
+                  if (row.isExpanded) {
+                    service.toggleRowExpansion(grid, row);
+                  }
                 });
               }
             }
@@ -42,6 +44,17 @@
       },
       toggleRowExpansion: function (grid, row) {
         row.isExpanded = !row.isExpanded;
+
+        //todo: remove hardcode and get row height
+        if (row.isExpanded) {
+          row.origHeight = row.height;
+          row.height = 60;
+        }
+        else {
+          row.height = row.origHeight;
+          delete row.origHeight;
+        }
+
         grid.api.expandable.raise.rowExpandedStateChanged(row);
       },
       defaultGridOptions: function (gridOptions) {

@@ -175,7 +175,11 @@ angular.module('ui.grid')
   GridRenderContainer.prototype.getCanvasHeight = function getCanvasHeight() {
     var self = this;
 
-    var ret =  self.grid.options.rowHeight * self.getVisibleRowCount();
+    var ret = 0;
+
+    self.visibleRowCache.forEach(function (row) {
+      ret += row.height;
+    });
 
     if (typeof(self.grid.horizontalScrollbarHeight) !== 'undefined' && self.grid.horizontalScrollbarHeight !== undefined && self.grid.horizontalScrollbarHeight > 0) {
       ret = ret - self.grid.horizontalScrollbarHeight;
