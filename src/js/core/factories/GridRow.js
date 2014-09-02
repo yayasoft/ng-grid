@@ -55,7 +55,16 @@ angular.module('ui.grid')
       */
     // Default to true
     this.visible = true;
-  }
+
+      /**
+       *  @ngdoc object
+       *  @name height
+       *  @propertyOf  ui.grid.class:GridRow
+       *  @description height of each individual row
+       */
+      this.height = grid.options.rowHeight;
+
+   }
 
   /**
    * @ngdoc function

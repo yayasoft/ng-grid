@@ -42,8 +42,9 @@
       toggleRowExpansion: function (grid, row) {
         row.isExpanded = !row.isExpanded;
 
-        if (!row.isExpanded) {
-          row.height = row.origHeight?row.origHeight:row.height;
+        if (!row.isExpanded && row.origHeight) {
+          row.height = row.origHeight;
+          delete row.origHeight;
         }
 
         grid.api.expandable.raise.rowExpandedStateChanged(row);
