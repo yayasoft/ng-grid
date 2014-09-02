@@ -6,7 +6,6 @@
   module.service('uiGridExpandableService', ['gridUtil', '$log', function (gridUtil, $log) {
     var service = {
       initializeGrid: function (grid) {
-        $log.log('***********************************************************************2');
         service.init(grid);
         var publicApi = {
           events: {
@@ -59,14 +58,12 @@
         });
       },
       init: function (grid) {
-        $log.log('***********************************************************************123');
         gridUtil.getTemplate(grid.options.rowExpandableTemplate)
           .then(
           function (template) {
             //TODO: template to be saved in variable in service and not options.
             grid.options.rowExpandableTemplateHtml = template;
             if (grid.options.allRowsExpanded) {
-              $log.log('***********************************************************************');
               service.expandAllRows(grid);
             }
           },
@@ -91,7 +88,6 @@
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
               uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
-              $log.log('***********************************************************************1');
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
             }
