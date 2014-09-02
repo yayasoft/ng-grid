@@ -137,26 +137,6 @@
       };
     }]);
 
-/* We might just remove this because expandable row will have first column of button on click of which it will open
-  module.directive('uiGridCell',
-    ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants',
-      function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants) {
-        return {
-          priority: -100,
-          restrict: 'A',
-          scope: false,
-          link: function ($scope, $elm, $attrs) {
-            $elm.on('click', function (evt) {
-              $timeout(function () {
-                uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
-                $scope.grid.refresh();
-              });
-            });
-          }
-        };
-      }]);
-*/
-
   module.directive('uiGridViewport',
     ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants',
       function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants) {
@@ -173,4 +153,5 @@
       };
     }
   ]);
+
 })();
