@@ -60,6 +60,7 @@
             service.toggleRowExpansion(grid, row);
           }
         });
+        grid.refresh();
       },
       init: function (grid) {
         gridUtil.getTemplate(grid.options.rowExpandableTemplate)
