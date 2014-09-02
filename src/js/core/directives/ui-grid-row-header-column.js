@@ -79,11 +79,14 @@ angular.module('ui.grid').directive('uiGridRowHeaderColumn', ['$compile', '$log'
         },
         post: function($scope, $elm, $attrs) {
           $scope.expand = function(button) {
-            $timeout(function() {
-              uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
-            });
-            if (button) {
-              $scope.expanded = !$scope.expanded;
+            if ($scope.grid.options.rowExpandableTemplateHtml) {
+              $timeout(function() {
+                uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
+                $scope.grid.refresh();
+              });
+              if (button) {
+                $scope.expanded = !$scope.expanded;
+              }
             }
           };
         }
