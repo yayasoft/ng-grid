@@ -1,4 +1,4 @@
-angular.module('ui.grid').directive('uiGridRowHeaderColumn', ['$compile', '$log', '$parse', 'gridUtil', 'uiGridConstants', function ($compile, $log, $parse, gridUtil, uiGridConstants) {
+angular.module('ui.grid').directive('uiGridRowHeaderColumn', ['$compile', '$log', '$parse', 'gridUtil', 'uiGridConstants', 'uiGridExpandableService', '$timeout', function ($compile, $log, $parse, gridUtil, uiGridConstants, uiGridExpandableService, $timeout) {
   var defaultCheckboxTemplate = 'ui-grid/uiGridRowHeaderColumnCheckbox';
   var defaultButtonTemplate = 'ui-grid/uiGridRowHeaderColumnButton';
   var defaultColumnTemplate = 'ui-grid/uiGridRowHeaderColumn';
@@ -78,10 +78,14 @@ angular.module('ui.grid').directive('uiGridRowHeaderColumn', ['$compile', '$log'
             });
         },
         post: function($scope, $elm, $attrs) {
-          $elm.on('click', function (){
-            $log.info("Row " + $scope.row.index + " was clicked");
-            isExpanded = !isExpanded;
-          });
+          $scope.expand = function(button) {
+            $timeout(function() {
+              uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
+            });
+            if (button) {
+              $scope.expanded = !$scope.expanded;
+            }
+          };
         }
       };
     }
