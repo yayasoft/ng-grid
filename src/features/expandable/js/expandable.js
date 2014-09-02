@@ -131,4 +131,23 @@
         }
       };
     }]);
+
+  module.directive('uiGridCell',
+    ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants',
+      function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants) {
+        return {
+          priority: -100,
+          restrict: 'A',
+          scope: false,
+          link: function ($scope, $elm, $attrs) {
+            $elm.on('click', function (evt) {
+              $timeout(function () {
+                uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
+                $scope.grid.refresh();
+              });
+            });
+          }
+        };
+      }]);
+
 })();
