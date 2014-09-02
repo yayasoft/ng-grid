@@ -973,11 +973,11 @@ angular.module('ui.grid')
 
   Grid.prototype.getCanvasHeight = function getCanvasHeight() {
     var self = this;
-    var ret =  self.visibleRowCache.reduce(function(previousValue, currentValue) {
-      return previousValue + ((currentValue.isExpanded && currentValue.expandedHeight)?
-        currentValue.expandedHeight+thisGrid.options.rowHeight+2:self.options.rowHeight);
-    }, 0);
-    //var ret =  this.options.rowHeight * this.getVisibleRowCount();
+    var ret = 0;
+
+    self.renderContainers.body.visibleRowCache.forEach(function (row) {
+      ret += row.height;
+    });
 
     if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
       ret = ret - this.horizontalScrollbarHeight;

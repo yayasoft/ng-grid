@@ -43,7 +43,7 @@
         row.isExpanded = !row.isExpanded;
 
         if (!row.isExpanded) {
-          row.height = row.height - row.expandedRowHeight?row.expandedRowHeight:0;
+          row.height = row.origHeight?row.origHeight:row.height;
         }
 
         grid.api.expandable.raise.rowExpandedStateChanged(row);
@@ -59,6 +59,7 @@
         gridUtil.getTemplate(grid.options.rowExpandableTemplate)
           .then(
           function (template) {
+            //TODO: template to be saved in variable in service and not options.
             grid.options.rowExpandableTemplateHtml = template;
             if (grid.options.allRowsExpanded) {
               service.expandAllRows(grid);
@@ -99,8 +100,9 @@
       function buildExpandedRow($elm, $scope, template) {
         var expandedRowElement = $compile($scope.grid.options.rowExpandableTemplateHtml)($scope);
         $elm.append(expandedRowElement);
-        $scope.row.expandedRowHeight = $elm.css("height")?Number($elm.css("height").slice(0, $elm.css("height").length-2)):0;
-        $scope.row.height = $scope.row.height + $scope.row.expandedRowHeight;
+        $scope.row.origHeight = $scope.row.height;
+        // TODO: height should include top and bottom margins and padding also.
+        $scope.row.height = $scope.row.height + $elm.css("height")?Number($elm.css("height").slice(0, $elm.css("height").length-2)):0;
       }
       return {
         replace: false,
