@@ -24,15 +24,12 @@
               },
               expandAllRows: function() {
                 grid.options.allRowsExpanded = true;
-                service.expandAllRows(grid);
+                service.collapseAllRows(grid);
+                service.expandAllRenderedRows(grid);
               },
               collapseAllRows: function() {
                 grid.options.allRowsExpanded = false;
-                angular.forEach(grid.renderContainers.body.renderedRows, function(row) {
-                  if (row.isExpanded) {
-                    service.toggleRowExpansion(grid, row);
-                  }
-                });
+                service.collapseAllRows(grid);
               }
             }
           }
@@ -50,9 +47,16 @@
 
         grid.api.expandable.raise.rowExpandedStateChanged(row);
       },
-      expandAllRows: function(grid) {
+      expandAllRenderedRows: function(grid) {
         angular.forEach(grid.renderContainers.body.renderedRows, function(row) {
           if (!row.isExpanded) {
+            service.toggleRowExpansion(grid, row);
+          }
+        });
+      },
+      collapseAllRows: function(grid) {
+        angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
+          if (row.isExpanded) {
             service.toggleRowExpansion(grid, row);
           }
         });
@@ -63,9 +67,6 @@
           function (template) {
             //TODO: template to be saved in variable in service and not options.
             grid.options.rowExpandableTemplateHtml = template;
-            if (grid.options.allRowsExpanded) {
-              service.expandAllRows(grid);
-            }
           },
           function (response) {
             throw new Error("Couldn't fetch/use gridOptions.rowExpandableTemplate '" +
@@ -142,7 +143,7 @@
         link: function ($scope, $elm, $attrs) {
           $scope.$on(uiGridConstants.events.GRID_SCROLL, function () {
             if ($scope.grid.options.allRowsExpanded) {
-              uiGridExpandableService.expandAllRows($scope.grid);
+              uiGridExpandableService.expandAllRenderedRows($scope.grid);
             }
           });
         }
