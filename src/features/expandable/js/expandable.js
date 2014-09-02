@@ -3,9 +3,10 @@
 
   var module = angular.module('ui.grid.expandable', ['ui.grid']);
 
-  module.service('uiGridExpandableService', ['gridUtil', function (gridUtil) {
+  module.service('uiGridExpandableService', ['gridUtil', '$log', function (gridUtil, $log) {
     var service = {
       initializeGrid: function (grid) {
+        $log.log('***********************************************************************2');
         service.init(grid);
         var publicApi = {
           events: {
@@ -27,6 +28,7 @@
                 service.expandAllRows(grid);
               },
               collapseAllRows: function() {
+                grid.options.allRowsExpanded = false;
                 angular.forEach(grid.renderContainers.body.renderedRows, function(row) {
                   if (row.isExpanded) {
                     service.toggleRowExpansion(grid, row);
@@ -57,12 +59,14 @@
         });
       },
       init: function (grid) {
+        $log.log('***********************************************************************123');
         gridUtil.getTemplate(grid.options.rowExpandableTemplate)
           .then(
           function (template) {
             //TODO: template to be saved in variable in service and not options.
             grid.options.rowExpandableTemplateHtml = template;
             if (grid.options.allRowsExpanded) {
+              $log.log('***********************************************************************');
               service.expandAllRows(grid);
             }
           },
@@ -87,6 +91,7 @@
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
               uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
+              $log.log('***********************************************************************1');
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
             }
@@ -132,6 +137,7 @@
       };
     }]);
 
+/* We might just remove this because expandable row will have first column of button on click of which it will open
   module.directive('uiGridCell',
     ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants',
       function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants) {
@@ -149,5 +155,22 @@
           }
         };
       }]);
+*/
 
+  module.directive('uiGridViewport',
+    ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants',
+      function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants) {
+      return {
+        priority: -100,
+        scope: false,
+        link: function ($scope, $elm, $attrs) {
+          $scope.$on(uiGridConstants.events.GRID_SCROLL, function () {
+            if ($scope.grid.options.allRowsExpanded) {
+              uiGridExpandableService.expandAllRows($scope.grid);
+            }
+          });
+        }
+      };
+    }
+  ]);
 })();
