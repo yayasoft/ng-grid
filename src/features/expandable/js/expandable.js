@@ -37,6 +37,7 @@
         grid.api.registerEventsFromObject(publicApi.events);
         grid.api.registerMethodsFromObject(publicApi.methods);
       },
+      //TODO: then  function is currently not called by row expanding and collapsing from click of first column, needs to be fixed.
       toggleRowExpansion: function (grid, row) {
         row.isExpanded = !row.isExpanded;
 
@@ -101,12 +102,19 @@
   module.directive('uiGridExpandableRow',
   ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants','gridUtil',
     function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants, gridUtil) {
+      function getHeightFromCSSProperty(cssProperty) {
+        var height = 0;
+        if (cssProperty) {
+          height = Number(cssProperty.slice(0, cssProperty.length-2));
+        }
+        return isNaN(height)? 0: height;
+      }
       function buildExpandedRow($elm, $scope, template) {
         var expandedRowElement = $compile($scope.grid.options.rowExpandableTemplateHtml)($scope);
         $elm.append(expandedRowElement);
         $scope.row.origHeight = $scope.row.height;
-        // TODO: height should include top and bottom margins and padding also.
-        $scope.row.height = $scope.row.height + $elm.css("height")?Number($elm.css("height").slice(0, $elm.css("height").length-2)):0;
+        $scope.row.height = getHeightFromCSSProperty($elm.css("margin-top")) + getHeightFromCSSProperty($elm.css("margin-bottom")) +
+          getHeightFromCSSProperty($elm.css("height")) + $scope.row.height;
       }
       return {
         replace: false,
