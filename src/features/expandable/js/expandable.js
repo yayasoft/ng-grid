@@ -39,13 +39,11 @@
       },
       //TODO: then  function is currently not called by row expanding and collapsing from click of first column, needs to be fixed.
       toggleRowExpansion: function (grid, row) {
-        row.isExpanded = !row.isExpanded;
-
-        if (!row.isExpanded && row.origHeight) {
+        if (row.isExpanded && row.origHeight) {
           row.height = row.origHeight;
           delete row.origHeight;
         }
-
+        row.isExpanded = !row.isExpanded;
         grid.api.expandable.raise.rowExpandedStateChanged(row);
       },
       expandAllRenderedRows: function(grid) {
@@ -61,7 +59,7 @@
             service.toggleRowExpansion(grid, row);
           }
         });
-        grid.refresh();
+        //grid.refresh();
       },
       init: function (grid) {
         gridUtil.getTemplate(grid.options.rowExpandableTemplate)
