@@ -12,7 +12,7 @@
 
       $scope.gridOptions.rowHeader = {
         rowHeaderColumnType: ['rowIndex', 'button'],
-        rowHeaderWidth: 60
+        rowHeaderWidth: 125
       };
 
       $scope.gridOptions.columnDefs = [

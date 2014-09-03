@@ -179,7 +179,7 @@ angular.module('ui.grid')
     var offset = 0;
     $log.info(gridUtil.isNullOrUndefined(this.options.rowHeader));
     if (!gridUtil.isNullOrUndefined(this.options.rowHeader)) {
-      var col = new GridColumn({name: "rowHeader", displayName: '', width: self.options.rowHeader.rowHeaderWidth ? self.options.rowHeader.rowHeaderWidth : 30, enableColumnMenu: false}, 0, self);
+      var col = new GridColumn({name: "", width: self.options.rowHeader.rowHeaderWidth ? self.options.rowHeader.rowHeaderWidth : 30, enableColumnMenu: false}, 0, self);
       self.columns.push(col);
       offset = 1;
     }
@@ -212,13 +212,6 @@ angular.module('ui.grid')
     });
 
     return $q.all(builderPromises);
-  };
-
-  Grid.prototype.getRowHeaderWidth = function() {
-    if (!gridUtil.isNullOrUndefined(this.options.rowHeader)) {
-      return this.options.rowHeader.rowHeaderWidth;
-    }
-    return 0;
   };
 
 /**
