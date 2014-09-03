@@ -30,7 +30,6 @@
           containerCtrl.viewport = $elm;
 
           $elm.on('scroll', function (evt) {
-            grid.scrollOn = true;
             var newScrollTop = $elm[0].scrollTop;
             // var newScrollLeft = $elm[0].scrollLeft;
             var newScrollLeft = gridUtil.normalizeScrollLeft($elm);
@@ -57,12 +56,7 @@
               
               rowContainer.adjustScrollVertical(newScrollTop, vertScrollPercentage);
             }
-            if (!$scope.$$phase) {
-              $scope.$digest();
-            }
-            $timeout(function(){
-              grid.scrollOn = false;
-            });
+
           });
         }
       };

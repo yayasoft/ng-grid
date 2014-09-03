@@ -43,6 +43,10 @@
           row.height = row.origHeight;
           delete row.origHeight;
         }
+        else {
+          row.origHeight = row.height;
+          row.height = grid.options.expandable.expandableRowHeight;
+        }
         row.isExpanded = !row.isExpanded;
         grid.api.expandable.raise.rowExpandedStateChanged(row);
       },
@@ -67,6 +71,8 @@
           function (template) {
             //TODO: template to be saved in variable in service and not options.
             grid.options.rowExpandableTemplateHtml = template;
+            grid.options.expandable = {};
+            grid.options.expandable.expandableRowHeight = 200;
           },
           function (response) {
             throw new Error("Couldn't fetch/use gridOptions.rowExpandableTemplate '" +
@@ -110,9 +116,7 @@
       function buildExpandedRow($elm, $scope, template) {
         var expandedRowElement = $compile($scope.grid.options.rowExpandableTemplateHtml)($scope);
         $elm.append(expandedRowElement);
-        $scope.row.origHeight = $scope.row.height;
-        $scope.row.height = getHeightFromCSSProperty($elm.css("margin-top")) + getHeightFromCSSProperty($elm.css("margin-bottom")) +
-          getHeightFromCSSProperty($elm.css("height")) + $scope.row.height;
+
       }
       return {
         replace: false,

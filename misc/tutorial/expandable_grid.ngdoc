@@ -8,7 +8,8 @@
     var app = angular.module('app', ['ui.grid', 'ui.grid.expandable']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
-      $scope.gridOptions = {};
+      $scope.gridOptions = {expandable:{}};
+      $scope.gridOptions.expandable.expandableRowHeight = 140;
 
       $scope.gridOptions.rowHeader = {
         rowHeaderColumnType: ['rowIndex', 'button'],
