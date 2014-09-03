@@ -1,8 +1,8 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridViewport', ['$log', 'gridUtil',
-    function($log, gridUtil) {
+  angular.module('ui.grid').directive('uiGridViewport', ['$log', 'gridUtil', '$timeout',
+    function($log, gridUtil, $timeout) {
       return {
         replace: true,
         scope: {},
@@ -30,6 +30,7 @@
           containerCtrl.viewport = $elm;
 
           $elm.on('scroll', function (evt) {
+            grid.scrollOn = true;
             var newScrollTop = $elm[0].scrollTop;
             // var newScrollLeft = $elm[0].scrollLeft;
             var newScrollLeft = gridUtil.normalizeScrollLeft($elm);
@@ -56,6 +57,12 @@
               
               rowContainer.adjustScrollVertical(newScrollTop, vertScrollPercentage);
             }
+            if (!$scope.$$phase) {
+              $scope.$digest();
+            }
+            $timeout(function(){
+              grid.scrollOn = false;
+            });
           });
         }
       };
