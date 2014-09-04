@@ -154,9 +154,7 @@
         link: function ($scope, $elm, $attrs) {
           $scope.$on(uiGridConstants.events.GRID_SCROLL, function () {
             if ($scope.grid.options.allRowsExpanded) {
-              $timeout( function() {
-                  uiGridExpandableService.expandAllRenderedRows($scope.grid);
-              });
+              uiGridExpandableService.expandAllRenderedRows($scope.grid);
             }
           });
         }
