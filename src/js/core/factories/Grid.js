@@ -56,11 +56,6 @@ angular.module('ui.grid')
   // Cached function to use with custom row templates
   this.getRowTemplateFn = null;
 
-  // Validate options
-  if (!this.options.enableNativeScrolling && !this.options.enableVirtualScrolling) {
-    throw "Either native or virtual scrolling must be enabled.";
-  }
-
 
   //representation of the rows on the grid.
   //these are wrapped references to the actual data rows (options.data)
@@ -69,9 +64,6 @@ angular.module('ui.grid')
   //represents the columns on the grid
   this.columns = [];
 
-  //current rows that are rendered on the DOM
-  this.renderedRows = [];
-  this.renderedColumns = [];
 
   this.api = new GridApi(this);
 };
@@ -422,7 +414,7 @@ angular.module('ui.grid')
       // Reset the rows length!
       self.rows.length = 0;
     }
-
+    
     var p1 = $q.when(self.processRowsProcessors(self.rows))
       .then(function (renderableRows) {
         return self.setVisibleRows(renderableRows);
@@ -662,7 +654,7 @@ angular.module('ui.grid')
     }
     
     // rows.forEach(function (row) {
-    for (var ri in rows) {
+    for (var ri = 0; ri < rows.length; ri++) {
       var row = rows[ri];
 
       // If the row is visible
@@ -780,8 +772,8 @@ angular.module('ui.grid')
 
       container.visibleColumnCache.length = 0;
     }
-    
-    for (var ci in columns) {
+
+    for (var ci = 0; ci < columns.length; ci++) {
       var column = columns[ci];
 
       // If the column is visible
@@ -798,44 +790,6 @@ angular.module('ui.grid')
     }
   };
 
-
-  Grid.prototype.setRenderedRows = function setRenderedRows(newRows) {
-    this.renderedRows.length = newRows.length;
-    for (var i = 0; i < newRows.length; i++) {
-      this.renderedRows[i] = newRows[i];
-    }
-  };
-
-  Grid.prototype.setRenderedColumns = function setRenderedColumns(newColumns) {
-    var self = this;
-
-    // OLD:
-    this.renderedColumns.length = newColumns.length;
-    for (var i = 0; i < newColumns.length; i++) {
-      this.renderedColumns[i] = newColumns[i];
-    }
-
-    // Reset all the render container row caches
-    // for (var i in self.renderContainers) {
-    //   var container = self.renderContainers[i];
-
-    //   container.columnCache.length = 0;
-    // }
-
-    // newColumns.forEach(function (column) {
-    //   // If the column is visible
-    //   if (column.visible) {
-    //     // If the column has a container specified
-    //     if (typeof(column.renderContainer) !== 'undefined' && column.renderContainer) {
-    //       self.renderContainers[column.renderContainer].columnCache.push(column);
-    //     }
-    //     // If not, put it into the body container
-    //     else {
-    //       self.renderContainers.body.columnCache.push(column);
-    //     }
-    //   }
-    // });
-  };
 
   /**
    * @ngdoc function
@@ -866,18 +820,6 @@ angular.module('ui.grid')
       });
   };
 
-  Grid.prototype.minRowsToRender = function minRowsToRender() {
-    var self = this;
-    var minRows = 0;
-    var rowAddedHeight = 0;
-    var viewPortHeight = self.getViewportHeight();
-    for (var i = self.renderContainers.body.visibleRowCache.length - 1;
-         rowAddedHeight < viewPortHeight && i >= 0; i--) {
-      rowAddedHeight += self.renderContainers.body.visibleRowCache[i].height;
-      minRows++;
-    }
-    return minRows;
-  };
 
   Grid.prototype.minColumnsToRender = function minColumnsToRender() {
     var self = this;
@@ -1019,50 +961,6 @@ angular.module('ui.grid')
     return this.renderContainers.body.visibleColumnCache.length;
   };
 
-  Grid.prototype.getCanvasHeight = function getCanvasHeight() {
-    var self = this;
-    var ret = 0;
-
-    self.renderContainers.body.visibleRowCache.forEach(function (row) {
-      ret += row.height;
-    });
-
-    if (typeof(this.horizontalScrollbarHeight) !== 'undefined' && this.horizontalScrollbarHeight !== undefined && this.horizontalScrollbarHeight > 0) {
-      ret = ret - this.horizontalScrollbarHeight;
-    }
-
-    return ret;
-  };
-
-  Grid.prototype.getCanvasWidth = function getCanvasWidth() {
-    var ret = this.canvasWidth;
-
-    if (typeof(this.verticalScrollbarWidth) !== 'undefined' && this.verticalScrollbarWidth !== undefined && this.verticalScrollbarWidth > 0) {
-      ret = ret - this.verticalScrollbarWidth;
-    }
-
-    // $log.debug('canvasWidth', ret);
-
-    return ret;
-  };
-
-  Grid.prototype.getTotalRowHeight = function getTotalRowHeight() {
-    var self = this;
-    var ret = 0;
-    self.renderContainers.body.visibleRowCache.forEach(function(row){
-      ret += row.height;
-    });
-    return ret;
-  };
-
-  // Is the grid currently scrolling?
-  Grid.prototype.isScrolling = function isScrolling() {
-    return this.scrolling ? true : false;
-  };
-
-  Grid.prototype.setScrolling = function setScrolling(scrolling) {
-    this.scrolling = scrolling;
-  };
 
   Grid.prototype.searchRows = function searchRows(renderableRows) {
     return rowSearcher.search(this, renderableRows, this.columns);

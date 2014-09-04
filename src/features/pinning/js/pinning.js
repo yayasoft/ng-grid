@@ -51,17 +51,16 @@
          *  @ngdoc object
          *  @name ui.grid.pinning.api:GridOptions
          *
-         *  @description GridOptions for pinning feature
+         *  @description GridOptions for pinning feature, these are available to be  
+           *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
          */
 
         /**
          *  @ngdoc object
          *  @name enableRowSelection
          *  @propertyOf  ui.grid.pinning.api:GridOptions
-         *  @propertyOf  ui.grid.class:GridOptions
          *  @description Enable pinning for the entire grid.  
          *  <br/>Defaults to true
-         *  <br/>_requires the pinning feature to be enabled_
          */
         gridOptions.enablePinning = gridOptions.enablePinning !== false;
 
@@ -72,19 +71,18 @@
 
         /**
          *  @ngdoc object
-         *  @name ui.grid.pinning.api:ColDef
+         *  @name ui.grid.pinning.api:ColumnDef
          *
-         *  @description ColDef for pinning feature
+         *  @description ColumnDef for pinning feature, these are available to be 
+         *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDefs gridOptions.columnDefs}
          */
 
         /**
          *  @ngdoc object
          *  @name enablePinning
-         *  @propertyOf  ui.grid.pinning.api:ColDef
-         *  @propertyOf  ui.grid.class:GridOptions.columnDef
+         *  @propertyOf  ui.grid.pinning.api:ColumnDef
          *  @description Enable pinning for the individual column.  
          *  <br/>Defaults to true
-         *  <br/>_requires the pinning feature to be enabled_
          */
         colDef.enablePinning = colDef.enablePinning === undefined ? gridOptions.enablePinning : colDef.enablePinning;
 
@@ -213,7 +211,7 @@
               if ($scope.side === 'left' || $scope.side === 'right') {
                 var cols = grid.renderContainers[$scope.side].visibleColumnCache;
                 var width = 0;
-                for (var i in cols) {
+                for (var i = 0; i < cols.length; i++) {
                   var col = cols[i];
                   width += col.drawnWidth;
                 }
@@ -225,7 +223,7 @@
                 // TODO(c0bra): Subtract sum of col widths from grid viewport width and update it
                 $elm.attr('style', null);
 
-                var myHeight = grid.getViewportHeight(); // + grid.horizontalScrollbarHeight;
+                var myHeight = grid.renderContainers.body.getViewportHeight(); // + grid.horizontalScrollbarHeight;
 
                 ret += '.grid' + grid.id + ' .ui-grid-pinned-container.' + $scope.side + ', .ui-grid-pinned-container.' + $scope.side + ' .ui-grid-viewport { width: ' + myWidth + 'px; height: ' + myHeight + 'px; } ';
               }

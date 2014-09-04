@@ -18,17 +18,16 @@
            *  @ngdoc object
            *  @name ui.grid.resizeColumns.api:GridOptions
            *
-           *  @description GridOptions for resizeColumns feature
+           *  @description GridOptions for resizeColumns feature, these are available to be  
+           *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
            */
 
           /**
            *  @ngdoc object
            *  @name enableColumnResizing
            *  @propertyOf  ui.grid.resizeColumns.api:GridOptions
-           *  @propertyOf  ui.grid.class:GridOptions
            *  @description Enable column resizing on the entire grid 
            *  <br/>Defaults to true
-           *  <br/>_requires the column resizing feature to be enabled_
            */
           gridOptions.enableColumnResizing = gridOptions.enableColumnResizing !== false;
 
@@ -44,19 +43,18 @@
           var promises = [];
           /**
            *  @ngdoc object
-           *  @name ui.grid.resizeColumns.api:ColDef
+           *  @name ui.grid.resizeColumns.api:ColumnDef
            *
-           *  @description ColDef for resizeColumns feature
+           *  @description ColumnDef for resizeColumns feature, these are available to be 
+           *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDefs gridOptions.columnDefs}
            */
 
           /**
            *  @ngdoc object
            *  @name enableColumnResizing
-           *  @propertyOf  ui.grid.resizeColumns.api:ColDef
-           *  @propertyOf  ui.grid.class:GridOptions.columnDef
+           *  @propertyOf  ui.grid.resizeColumns.api:ColumnDef
            *  @description Enable column resizing on an individual column
            *  <br/>Defaults to GridOptions.enableColumnResizing
-           *  <br/>_requires column resizing feature to be enabled_
            */
           //default to true unless gridOptions or colDef is explicitly false
           colDef.enableColumnResizing = colDef.enableColumnResizing === undefined ? gridOptions.enableColumnResizing : colDef.enableColumnResizing;
@@ -83,7 +81,7 @@
    * @restrict A
    * @description
    * Enables resizing for all columns on the grid. If, for some reason, you want to use the ui-grid-resize-columns directive, but not allow column resizing, you can explicitly set the
-   * option to false. This prevents resizing for the entire grid, regardless of individual colDef options.
+   * option to false. This prevents resizing for the entire grid, regardless of individual columnDef options.
    *
    * @example
    <doc:example module="app">
@@ -162,9 +160,11 @@
                 resizerRight.attr('position', 'right');
 
                 var col = $scope.col;
-                
+                var renderContainer = col.getRenderContainer();
+
+
                 // Get the column to the left of this one
-                var otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
+                var otherCol = renderContainer.renderedColumns[$scope.renderIndex - 1];
 
                 // Don't append the left resizer if this is the first column or the column to the left of this one has resizing disabled
                 if (otherCol && $scope.col.index !== 0 && otherCol.colDef.enableColumnResizing !== false) {
@@ -275,30 +275,7 @@
           uiGridCtrl.grid.buildColumns()
             .then(function() {
               // Then refresh the grid canvas, rebuilding the styles so that the scrollbar updates its size
-              uiGridCtrl.refreshCanvas(true)
-                .then(function() {
-                  // If virtual scrolling is turned on we need to update the scrollbar and stuff. The native scrollbars update automatically, of course
-                  if (uiGridCtrl.grid.options.enableVirtualScrolling) {
-                    // Then fire a scroll event to put the scrollbar in the right place, so it doesn't end up too far ahead or behind
-                    var args = uiGridCtrl.prevScrollArgs ? uiGridCtrl.prevScrollArgs : { x: { percentage: 0 } };
-
-                    args.target = $elm;
-                      
-                    // Add an extra bit of percentage to the scroll event based on the xDiff we were passed
-                    if (xDiff && args.x && args.x.pixels) {
-                      var extraPercent = xDiff / uiGridCtrl.grid.getHeaderViewportWidth();
-
-                      args.x.percentage = args.x.percentage - extraPercent;
-
-                      // Can't be less than 0% or more than 100%
-                      if (args.x.percentage > 1) { args.x.percentage = 1; }
-                      else if (args.x.percentage < 0) { args.x.percentage = 0; }
-                    }
-                    
-                    // Fire the scroll event
-                    uiGridCtrl.fireScrollingEvent(args);
-                  }
-                });
+              uiGridCtrl.refreshCanvas(true);
             });
         }
 
@@ -313,14 +290,15 @@
 
           // The other column to resize (the one next to this one)
           var col = $scope.col;
+          var renderContainer = col.getRenderContainer();
           var otherCol;
           if ($scope.position === 'left') {
             // Get the column to the left of this one
-            col = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
+            col = renderContainer.renderedColumns[$scope.renderIndex - 1];
             otherCol = $scope.col;
           }
           else if ($scope.position === 'right') {
-            otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex + 1];
+            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
           }
 
           // Don't resize if it's disabled on this column
@@ -374,14 +352,16 @@
 
           // The other column to resize (the one next to this one)
           var col = $scope.col;
+          var renderContainer = col.getRenderContainer();
+
           var otherCol;
           if ($scope.position === 'left') {
             // Get the column to the left of this one
-            col = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
+            col = renderContainer.renderedColumns[$scope.renderIndex - 1];
             otherCol = $scope.col;
           }
           else if ($scope.position === 'right') {
-            otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex + 1];
+            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
           }
 
           // Don't resize if it's disabled on this column
@@ -441,16 +421,19 @@
           event.stopPropagation();
 
           var col = $scope.col;
+          var renderContainer = col.getRenderContainer();
+
           var otherCol, multiplier;
 
           // If we're the left-positioned resizer then we need to resize the column to the left of our column, and not our column itself
           if ($scope.position === 'left') {
-            col = uiGridCtrl.grid.renderedColumns[$scope.renderIndex - 1];
+            col = renderContainer.renderedColumns[$scope.renderIndex - 1];
             otherCol = $scope.col;
             multiplier = 1;
           }
           else if ($scope.position === 'right') {
-            otherCol = uiGridCtrl.grid.renderedColumns[$scope.renderIndex + 1];
+            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
+            otherCol = renderContainer.renderedColumns[$scope.renderIndex + 1];
             multiplier = -1;
           }
 

@@ -123,6 +123,25 @@
                 },
                 /**
                  * @ngdoc function
+                 * @name selectAllVisibleRows
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Selects all visible rows.  Does nothing if multiSelect = false
+                 */
+                selectAllVisibleRows: function () {
+                  if (grid.options.multiSelect === false) {
+                    return;
+                  }
+
+                  grid.rows.forEach(function (row) {
+                    if (row.visible) {
+                      row.isSelected = true;
+                    } else {
+                      row.isSelected = false;
+                    }
+                  });
+                },
+                /**
+                 * @ngdoc function
                  * @name clearSelectedRows
                  * @methodOf  ui.grid.selection.api:PublicApi
                  * @description Unselects all rows
@@ -167,27 +186,24 @@
            *  @ngdoc object
            *  @name ui.grid.selection.api:GridOptions
            *
-           *  @description GridOptions for selection feature
+           *  @description GridOptions for selection feature, these are available to be  
+           *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
            */
 
           /**
            *  @ngdoc object
            *  @name enableRowSelection
            *  @propertyOf  ui.grid.selection.api:GridOptions
-           *  @propertyOf  ui.grid.class:GridOptions
            *  @description Enable row selection for entire grid.
            *  <br/>Defaults to true
-           *  <br/>_requires row selection feature to be enabled_
            */
           gridOptions.enableRowSelection = gridOptions.enableRowSelection !== false;
           /**
            *  @ngdoc object
            *  @name multiSelect
            *  @propertyOf  ui.grid.selection.api:GridOptions
-           *  @propertyOf  ui.grid.class:GridOptions
            *  @description Enable multiple row selection for entire grid
            *  <br/>Defaults to true
-           *  <br/>_requires row selection feature to be enabled_
            */
           gridOptions.multiSelect = gridOptions.multiSelect !== false;
         },
@@ -380,16 +396,16 @@
             }
 
             function registerRowSelectionEvents() {
-                $elm.on('click', function (evt) {
-                    if (evt.shiftKey) {
-                        uiGridSelectionService.shiftSelect($scope.grid, $scope.row, $scope.grid.options.multiSelect);
+              $elm.on('click', function (evt) {
+                if (evt.shiftKey) {
+                  uiGridSelectionService.shiftSelect($scope.grid, $scope.row, $scope.grid.options.multiSelect);
 
-                    }
-                    else {
-                        uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect);
-                    }
-                    $scope.$apply();
-                });
+                }
+                else {
+                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, $scope.grid.options.multiSelect);
+                }
+                $scope.$apply();
+              });
             }
           }
         };
