@@ -23,11 +23,9 @@
                 }
               },
               expandAllRows: function() {
-                grid.options.allRowsExpanded = true;
                 service.expandAllRows(grid);
               },
               collapseAllRows: function() {
-                grid.options.allRowsExpanded = false;
                 service.collapseAllRows(grid);
               }
             }
@@ -131,22 +129,5 @@
         }
       };
     }]);
-
-  module.directive('uiGridViewport',
-    ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants',
-      function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants) {
-      return {
-        priority: -100,
-        scope: false,
-        link: function ($scope, $elm, $attrs) {
-          $scope.$on(uiGridConstants.events.GRID_SCROLL, function () {
-            if ($scope.grid.options.allRowsExpanded) {
-              uiGridExpandableService.expandAllRenderedRows($scope.grid);
-            }
-          });
-        }
-      };
-    }
-  ]);
 
 })();
