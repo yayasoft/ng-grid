@@ -1,8 +1,8 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridViewport', ['$log', 'gridUtil', '$timeout',
-    function($log, gridUtil, $timeout) {
+  angular.module('ui.grid').directive('uiGridViewport', ['$log', 'gridUtil',
+    function($log, gridUtil) {
       return {
         replace: true,
         scope: {},
@@ -56,7 +56,6 @@
               
               rowContainer.adjustScrollVertical(newScrollTop, vertScrollPercentage);
             }
-
           });
         }
       };

@@ -2,6 +2,19 @@
 @name Tutorial: Expandable grid
 @description
 
+User can specify:
+<pre>
+  $scope.gridOptions = {rowHeader: { //rowHeader options }};
+</pre>
+
+to enable header row column.
+
+If gridOptions.rowExpandableTemplate is provided, then clicking on checboxes and buttons will expand row and represent provided template.
+
+<pre>
+  $scope.gridOptions.rowExpandableTemplate = 'rowExpandableTemplate.html';
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
@@ -12,7 +25,7 @@
       $scope.gridOptions.expandable.expandableRowHeight = 140;
 
       $scope.gridOptions.rowHeader = {
-        rowHeaderColumnType: ['rowIndex', 'button'],
+        rowIndex: true,
         rowHeaderWidth: 125
       };
 
