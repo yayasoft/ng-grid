@@ -9,32 +9,6 @@ User can specify:
 
 to enable header row column.
 
-UI-Grid allows user to choose what items to represent inside the cell:
-
-- rowIndex
-- checkbox
-- button
-
-<pre>
-  $scope.gridOptions.rowHeader.rowHeaderColumnType = ['rowIndex', 'checkbox']; //Array 
-
-  $scope.gridOptions.rowHeader.rowHeaderColumnType = 'rowIndexs'; // or string
-</pre>
-
-Each of the item can be customized:
-
-<pre>
-  // Template for 'button' type
-  $scope.gridOptions.rowHeader.rowHeaderButtonTemplate = '<input type="button" value="expand" class="MyCustomButton">';
-
-  // Template for 'checkbox' type
-  $scope.gridOptions.rowHeader.rowHeaderCellTemplate = '<input type="checkbox" class="MyCustomCheckbox">';
-
-  //Or custom template 
-
-  $scope.gridOptions.rowHeader.rowHeaderCustomTemplate = '<div class="container"><button class="MyCustomInput'>Open</button></div>';
-</pre>
-
 If gridOptions.rowExpandableTemplate is provided, then clicking on checboxes and buttons will expand row and represent provided template.
 
 <pre>
@@ -52,7 +26,7 @@ If gridOptions.rowExpandableTemplate is provided, then clicking on checboxes and
       $scope.gridOptions = {};
 
       $scope.gridOptions.rowHeader = {
-        rowHeaderColumnType: ['rowIndex', 'button'],
+        rowIndex: true,
         rowHeaderWidth: 125
       };
 

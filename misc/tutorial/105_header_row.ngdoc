@@ -11,32 +11,6 @@ User can specify:
 
 to enable header row cell.
 
-UI-Grid allows you to choose what items to represent inside the cell:
-
-- rowIndex
-- checkbox
-- button
-
-<pre>
-  $scope.gridOptions.rowHeader.rowHeaderColumnType = ['rowIndex', 'checkbox']; //Array 
-
-  $scope.gridOptions.rowHeader.rowHeaderColumnType = 'rowIndexs'; // or string
-</pre>
-
-Each of the item can be customized:
-
-<pre>
-  // Template for 'button' type
-  $scope.gridOptions.rowHeader.rowHeaderButtonTemplate = '<input type="button" value="expand" class="MyCustomButton">';
-
-  // Template for 'checkbox' type
-  $scope.gridOptions.rowHeader.rowHeaderCellTemplate = '<input type="checkbox" class="MyCustomCheckbox">';
-
-  //Or custom template 
-
-  $scope.gridOptions.rowHeader.rowHeaderCustomTemplate = '<div class="container"><button class="MyCustomInput'>Open</button></div>';
-</pre>
-
 @example
 <example module="app">
   <file name="app.js">
@@ -46,33 +20,10 @@ Each of the item can be customized:
 
         $scope.gridOptions = {};
         $scope.gridOptions.rowHeader = {
-          rowHeaderColumnType: ['rowIndex', 'checkbox'],
-          rowHeaderWidth: 70
+          rowHeaderWidth: 50,
+          rowIndex: true
         };
         $scope.gridOptions.columnDefs = [
-          { name:'id', width:50 },
-          { name:'name', width:100 },
-          { name:'age', width:100  },
-          { name:'address.street', width:150  },
-          { name:'address.city', width:150 },
-          { name:'address.state', width:50 },
-          { name:'address.zip', width:50 },
-          { name:'company', width:100 },
-          { name:'email', width:100 },
-          { name:'phone', width:200 },
-          { name:'about', width:300 },
-          { name:'friends[0].name', displayName:'1st friend', width:150 },
-          { name:'friends[1].name', displayName:'2nd friend', width:150 },
-          { name:'friends[2].name', displayName:'3rd friend', width:150 },
-        ];
-        $scope.gridOptionsCustom = {};
-        $scope.gridOptionsCustom.rowHeader = {
-          rowHeaderWidth: 50,
-          rowHeaderCustomTemplate: '<input type="button" value="expand">'
-        };
-
- 
-        $scope.gridOptionsCustom.columnDefs = [
           { name:'id', width:50 },
           { name:'name', width:100 },
           { name:'age', width:100  },
@@ -92,7 +43,6 @@ Each of the item can be customized:
         $http.get('/data/500_complex.json')
           .success(function(data) {
             $scope.gridOptions.data = data;
-            $scope.gridOptionsCustom.data = data;
           });
 });
     }]);
@@ -101,9 +51,6 @@ Each of the item can be customized:
     <div ng-controller="MainCtrl">
 
       <div ui-grid="gridOptions" class="grid"></div>
-
-      <h3>Custom row header button template:</h3>
-      <div ui-grid="gridOptionsCustom" class="grid"></div>
 
     </div>
   </file>
