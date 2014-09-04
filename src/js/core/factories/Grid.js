@@ -177,7 +177,6 @@ angular.module('ui.grid')
     var self = this;
     var builderPromises = [];
     var offset = 0;
-    $log.info(gridUtil.isNullOrUndefined(this.options.rowHeader));
     if (!gridUtil.isNullOrUndefined(this.options.rowHeader)) {
       var col = new GridColumn({name: "", width: 50, enableColumnMenu: false, pinned: true}, 0, self);
       self.columns.push(col);

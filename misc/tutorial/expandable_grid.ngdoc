@@ -15,15 +15,14 @@ If gridOptions.rowExpandableTemplate is provided, then clicking on checboxes and
   $scope.gridOptions.rowExpandableTemplate = 'rowExpandableTemplate.html';
 </pre>
 
-
-
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid','ui.grid.expandable']);
+    var app = angular.module('app', ['ui.grid', 'ui.grid.expandable']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
-      $scope.gridOptions = {};
+      $scope.gridOptions = {expandable:{}};
+      $scope.gridOptions.expandable.expandableRowHeight = 140;
 
       $scope.gridOptions.rowHeader = {
         rowIndex: true,

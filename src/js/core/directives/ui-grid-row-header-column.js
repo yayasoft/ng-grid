@@ -39,11 +39,9 @@ angular.module('ui.grid').directive('uiGridRowHeaderColumn', ['$compile', '$log'
               $elm.width(rowHeaderWidth(digits));
               $scope.grid.columns[0].width = rowHeaderWidth(digits);
               $scope.grid.refreshCanvas(true);
-              $log.info($scope.grid);
             });
         },
         post: function($scope, $elm, $attrs) {
-
           $elm.on('click', function() {
             if ($scope.grid.options.rowExpandableTemplateHtml) {
               $timeout(function() {

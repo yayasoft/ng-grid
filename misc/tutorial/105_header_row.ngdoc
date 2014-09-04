@@ -14,9 +14,9 @@ to enable header row cell.
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid', 'ui.grid.expandable']);
+    var app = angular.module('app', ['ui.grid']);
 
-    app.controller('MainCtrl', ['$scope', 'i18nService', '$http', 'uiGridExpandableService', function ($scope, i18nService, $http) {
+    app.controller('MainCtrl', ['$scope', 'i18nService', '$http', function ($scope, i18nService, $http) {
 
         $scope.gridOptions = {};
         $scope.gridOptions.rowHeader = {
