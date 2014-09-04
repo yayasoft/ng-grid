@@ -65,7 +65,14 @@ angular.module('ui.grid')
 
   GridRenderContainer.prototype.minRowsToRender = function minRowsToRender() {
     var self = this;
-    return Math.ceil(self.getViewportHeight() / self.grid.options.rowHeight);
+    var minRows = 0;
+    var rowAddedHeight = 0;
+    var viewPortHeight = self.getViewportHeight();
+    for (var i = self.visibleRowCache.length - 1; rowAddedHeight < viewPortHeight && i >= 0; i--) {
+      rowAddedHeight += self.visibleRowCache[i].height;
+      minRows++;
+    }
+    return minRows;
   };
 
   GridRenderContainer.prototype.minColumnsToRender = function minColumnsToRender() {
@@ -175,9 +182,9 @@ angular.module('ui.grid')
   GridRenderContainer.prototype.getCanvasHeight = function getCanvasHeight() {
     var self = this;
 
-    var ret = 0;
+    var ret =  0;
 
-    self.visibleRowCache.forEach(function (row) {
+    self.visibleRowCache.forEach(function(row){
       ret += row.height;
     });
 
@@ -392,7 +399,8 @@ angular.module('ui.grid')
     
     if (index === 0 && self.currentTopRow !== 0) {
       // The row offset-top is just the height of the rows above the current top-most row, which are no longer rendered
-      var hiddenRowWidth = (self.currentTopRow) * self.grid.options.rowHeight;
+      var hiddenRowWidth = (self.currentTopRow) *
+        self.visibleRowCache[self.currentTopRow].height;
 
       // return { 'margin-top': hiddenRowWidth + 'px' };
       styles['margin-top'] = hiddenRowWidth + 'px';

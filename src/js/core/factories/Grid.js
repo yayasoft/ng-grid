@@ -422,7 +422,7 @@ angular.module('ui.grid')
       // Reset the rows length!
       self.rows.length = 0;
     }
-    
+
     var p1 = $q.when(self.processRowsProcessors(self.rows))
       .then(function (renderableRows) {
         return self.setVisibleRows(renderableRows);
@@ -867,7 +867,16 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.minRowsToRender = function minRowsToRender() {
-    return Math.ceil(this.getViewportHeight() / this.options.rowHeight);
+    var self = this;
+    var minRows = 0;
+    var rowAddedHeight = 0;
+    var viewPortHeight = self.getViewportHeight();
+    for (var i = self.renderContainers.body.visibleRowCache.length - 1;
+         rowAddedHeight < viewPortHeight && i >= 0; i--) {
+      rowAddedHeight += self.renderContainers.body.visibleRowCache[i].height;
+      minRows++;
+    }
+    return minRows;
   };
 
   Grid.prototype.minColumnsToRender = function minColumnsToRender() {
@@ -1038,7 +1047,12 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.getTotalRowHeight = function getTotalRowHeight() {
-    return this.options.rowHeight * this.getVisibleRowCount();
+    var self = this;
+    var ret = 0;
+    self.renderContainers.body.visibleRowCache.forEach(function(row){
+      ret += row.height;
+    });
+    return ret;
   };
 
   // Is the grid currently scrolling?
