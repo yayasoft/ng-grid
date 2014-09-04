@@ -44,7 +44,7 @@
         $scope.gridOptions.rowExpandableTemplate = 'rowExpandableTemplate.html';
 
         $scope.expandAllRows = function() {
-          $scope.gridApi.expandable.expandAllRows();
+          $scope.gridApi.expandable.expandAllRows($scope);
         }
 
         $scope.collapseAllRows = function() {
