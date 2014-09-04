@@ -151,7 +151,7 @@
             p.resolve();
           });
         }
-
+        self.grid.ready = p.promise;
         return p.promise;
       };
 

@@ -3,7 +3,7 @@
 
   var module = angular.module('ui.grid.expandable', ['ui.grid']);
 
-  module.service('uiGridExpandableService', ['gridUtil', '$log', function (gridUtil, $log) {
+  module.service('uiGridExpandableService', ['gridUtil', '$log', '$compile', function (gridUtil, $log, $compile) {
     var service = {
       initializeGrid: function (grid) {
         service.init(grid);
@@ -35,37 +35,32 @@
         grid.api.registerMethodsFromObject(publicApi.methods);
       },
       toggleRowExpansion: function (grid, row) {
-        if (row.isExpanded && row.origHeight) {
-          row.height = row.origHeight;
-          delete row.origHeight;
-        }
-        else {
-          row.origHeight = row.height;
-          row.height = grid.options.expandable.expandableRowHeight;
-        }
         row.isExpanded = !row.isExpanded;
         grid.api.expandable.raise.rowExpandedStateChanged(row);
       },
-      expandAllRows: function(grid) {
+      expandAllRows: function(grid, $scope) {
         angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
-          if (!row.isExpanded) {
-            service.toggleRowExpansion(grid, row);
-          }
+          gridUtil.getTemplate(grid.options.rowExpandableTemplate).then(
+            function (template) {
+              row.renderedExpandableTemplate = template;
+              row.isExpanded = true;
+              grid.api.expandable.raise.rowExpandedStateChanged(row);
+            });
         });
       },
       collapseAllRows: function(grid) {
         angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
-          if (row.isExpanded) {
-            service.toggleRowExpansion(grid, row);
-          }
+          row.isExpanded = false;
+          grid.api.expandable.raise.rowExpandedStateChanged(row);
         });
       },
       init: function (grid) {
+        grid.isScrolling = false;
         gridUtil.getTemplate(grid.options.rowExpandableTemplate)
           .then(
           function (template) {
             //TODO: template to be saved in variable in service and not options.
-            grid.options.rowExpandableTemplateHtml = template;
+            //grid.options.rowExpandableTemplateHtml = template;
             grid.options.expandable = {};
             grid.options.expandable.expandableRowHeight = 200;
           },
@@ -99,8 +94,19 @@
     }]);
 
   module.directive('uiGridExpandableRow',
-  ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants','gridUtil',
-    function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants, gridUtil) {
+  ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants','gridUtil','$interval','debounce',
+    function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants, gridUtil, $interval, debounce) {
+      function getHeightFromCSSProperty(cssProperty) {
+        var height = 0;
+        if (cssProperty) {
+          height = Number(cssProperty.slice(0, cssProperty.length-2));
+        }
+        return isNaN(height)? 0: height;
+      }
+      function buildExpandedRow($elm, $scope, template) {
+        var expandedRowElement = $compile(template)($scope);
+        $elm.append(expandedRowElement);
+      }
       return {
         replace: false,
         priority: 0,
@@ -109,25 +115,38 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-              $scope.row.expandedRowHeight = 0;
-              if (!$scope.grid.options.rowExpandableTemplateHtml) {
-                gridUtil.getTemplate($scope.grid.options.rowExpandableTemplateHtml).then(
-                  function (template) {
-                    $scope.grid.options.rowExpandableTemplateHtml = template;
-                    var expandedRowElement = $compile($scope.grid.options.rowExpandableTemplateHtml)($scope);
-                    $elm.append(expandedRowElement);
-                });
-              }
-              else {
-                var expandedRowElement = $compile($scope.grid.options.rowExpandableTemplateHtml)($scope);
-                $elm.append(expandedRowElement);
-              }
+              /*gridUtil.getTemplate($scope.grid.options.rowExpandableTemplate).then(
+                function (template) {
+                  buildExpandedRow($elm, $scope, template);
+                });*/
+              $scope.row.scope = $scope;
+              buildExpandedRow($elm, $scope, $scope.row.renderedExpandableTemplate);
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
+              $scope.$on(uiGridConstants.events.GRID_SCROLL, debounce(function(evt) {
+                $scope.grid.isScrolling = false;
+              }, 250));
+
+              $scope.$on(uiGridConstants.events.GRID_SCROLL, debounce(function(evt) {
+                $scope.grid.isScrolling = true;
+              }, 250, true));
             }
+
           };
         }
       };
     }]);
 
+  module.directive('uiGridViewport',
+    ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants', '$interval',
+      function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants, $interval) {
+        return {
+          priority: -100,
+          scope: false,
+          link: function ($scope, $elm, $attrs) {
+
+          }
+        };
+      }
+    ]);
 })();
