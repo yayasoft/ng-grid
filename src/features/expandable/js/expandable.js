@@ -40,12 +40,8 @@
       },
       expandAllRows: function(grid, $scope) {
         angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
-          gridUtil.getTemplate(grid.options.rowExpandableTemplate).then(
-            function (template) {
-              row.renderedExpandableTemplate = template;
               row.isExpanded = true;
               grid.api.expandable.raise.rowExpandedStateChanged(row);
-            });
         });
       },
       collapseAllRows: function(grid) {
@@ -55,7 +51,7 @@
         });
       },
       init: function (grid) {
-        grid.isScrolling = false;
+       /* grid.isScrolling = false;
         gridUtil.getTemplate(grid.options.rowExpandableTemplate)
           .then(
           function (template) {
@@ -68,7 +64,7 @@
             throw new Error("Couldn't fetch/use gridOptions.rowExpandableTemplate '" +
               grid.options.rowExpandableTemplate + "'");
           }
-        );
+        );*/
       }
     };
     return service;
@@ -84,6 +80,7 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+              uiGridCtrl.grid.isExpandable = true;
               uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
@@ -94,8 +91,8 @@
     }]);
 
   module.directive('uiGridExpandableRow',
-  ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants','gridUtil','$interval','debounce',
-    function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants, gridUtil, $interval, debounce) {
+  ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants','gridUtil',
+    function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants, gridUtil) {
       function getHeightFromCSSProperty(cssProperty) {
         var height = 0;
         if (cssProperty) {
@@ -115,23 +112,14 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-              /*gridUtil.getTemplate($scope.grid.options.rowExpandableTemplate).then(
+              gridUtil.getTemplate($scope.grid.options.rowExpandableTemplate).then(
                 function (template) {
                   buildExpandedRow($elm, $scope, template);
-                });*/
-              $scope.row.scope = $scope;
-              buildExpandedRow($elm, $scope, $scope.row.renderedExpandableTemplate);
+                });
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
-              $scope.$on(uiGridConstants.events.GRID_SCROLL, debounce(function(evt) {
-                $scope.grid.isScrolling = false;
-              }, 250));
 
-              $scope.$on(uiGridConstants.events.GRID_SCROLL, debounce(function(evt) {
-                $scope.grid.isScrolling = true;
-              }, 250, true));
             }
-
           };
         }
       };
