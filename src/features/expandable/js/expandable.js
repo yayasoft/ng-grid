@@ -133,8 +133,6 @@
           scope: false,
           compile: function ($elm, $attrs) {
             var rowRepeatDiv = angular.element($elm.children().children()[0]);
-            var expandable = $templateCache.get('ui-grid/expandable');
-            rowRepeatDiv.append(expandable);
             var expandedRowFillerElement = $templateCache.get('ui-grid/expandableScrollFiller');
             var expandedRowElement = $templateCache.get('ui-grid/expandableRow');
             rowRepeatDiv.append(expandedRowElement);
