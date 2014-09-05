@@ -40,12 +40,8 @@
       },
       expandAllRows: function(grid, $scope) {
         angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
-          gridUtil.getTemplate(grid.options.rowExpandableTemplate).then(
-            function (template) {
-              row.renderedExpandableTemplate = template;
               row.isExpanded = true;
               grid.api.expandable.raise.rowExpandedStateChanged(row);
-            });
         });
       },
       collapseAllRows: function(grid) {
@@ -55,20 +51,9 @@
         });
       },
       init: function (grid) {
-        grid.isScrolling = false;
-        gridUtil.getTemplate(grid.options.rowExpandableTemplate)
-          .then(
-          function (template) {
-            //TODO: template to be saved in variable in service and not options.
-            //grid.options.rowExpandableTemplateHtml = template;
-            grid.options.expandable = {};
-            grid.options.expandable.expandableRowHeight = 200;
-          },
-          function (response) {
-            throw new Error("Couldn't fetch/use gridOptions.rowExpandableTemplate '" +
-              grid.options.rowExpandableTemplate + "'");
-          }
-        );
+        grid.options.expandable = {};
+        grid.options.expandable.expandableRowHeight = 200;
+        grid.isExpandable = true;
       }
     };
     return service;
@@ -115,21 +100,12 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-              /*gridUtil.getTemplate($scope.grid.options.rowExpandableTemplate).then(
+              gridUtil.getTemplate($scope.grid.options.rowExpandableTemplate).then(
                 function (template) {
                   buildExpandedRow($elm, $scope, template);
-                });*/
-              $scope.row.scope = $scope;
-              buildExpandedRow($elm, $scope, $scope.row.renderedExpandableTemplate);
+                });
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
-              $scope.$on(uiGridConstants.events.GRID_SCROLL, debounce(function(evt) {
-                $scope.grid.isScrolling = false;
-              }, 250));
-
-              $scope.$on(uiGridConstants.events.GRID_SCROLL, debounce(function(evt) {
-                $scope.grid.isScrolling = true;
-              }, 250, true));
             }
 
           };

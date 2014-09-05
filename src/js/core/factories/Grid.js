@@ -219,9 +219,17 @@ angular.module('ui.grid')
     var builderPromises = [];
     var offset = 0;
     if (!gridUtil.isNullOrUndefined(this.options.rowHeader)) {
-      var col = new GridColumn({name: "", width: 50, enableColumnMenu: false, pinned: true}, 0, self);
+      var col = new GridColumn({name: 'rowHeader', displayName: '', width: 50, enableColumnMenu: false, pinned: true}, 0, self);
+      col.isRowHeader = true;
       self.columns.push(col);
       offset = 1;
+    }
+
+    if (self.isExpandable) {
+      var expandableCol = new GridColumn({name: 'expandableButtons', displayName: '', width: 40, enableColumnMenu: false, pinned: true}, 1, self);
+      expandableCol.cellTemplate = '<div class="ui-grid-cell uiGridExpandableButtonsCell"><div class="ui-grid-cell-contents"><button class="uiGridExpandableButton" ng-if="!row.isExpanded;" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)">E</button><button class="uiGridExpandableButton" ng-if="row.isExpanded" ng-click="row.isExpanded = false">C</button></div></div>';
+      self.columns.push(expandableCol);
+      offset = 2;
     }
 
     // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
@@ -264,7 +272,7 @@ angular.module('ui.grid')
         $log.info('pre-compiling cell templates');
         var showRowHeader = !gridUtil.isNullOrUndefined(this.options.rowHeader);
         this.columns.forEach(function (col, index) {
-        if (showRowHeader && index === 0){
+        if (showRowHeader && col.isRowHeader){
           return;
         }
           var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');

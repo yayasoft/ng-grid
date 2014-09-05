@@ -1,4 +1,5 @@
-angular.module('ui.grid').directive('uiGridRowHeaderColumn', ['$compile', '$log', '$parse', 'gridUtil', 'uiGridConstants', 'uiGridExpandableService', '$timeout', function ($compile, $log, $parse, gridUtil, uiGridConstants, uiGridExpandableService, $timeout) {
+angular.module('ui.grid').directive('uiGridRowHeaderColumn', ['$compile', '$log', '$parse', 'gridUtil', 'uiGridConstants', '$timeout',
+  function ($compile, $log, $parse, gridUtil, uiGridConstants, $timeout) {
   var defaultTemplate = 'ui-grid/uiGridRowHeaderColumn';
   var isExpanded = false;
   var uiGridRowHeaderColumn = {
@@ -42,14 +43,6 @@ angular.module('ui.grid').directive('uiGridRowHeaderColumn', ['$compile', '$log'
             });
         },
         post: function($scope, $elm, $attrs) {
-          $elm.on('click', function() {
-            if ($scope.grid.options.rowExpandableTemplateHtml) {
-              $timeout(function() {
-                uiGridExpandableService.toggleRowExpansion($scope.grid, $scope.row);
-                $scope.grid.refresh();
-              });
-            }
-          });
         }
       };
     }
