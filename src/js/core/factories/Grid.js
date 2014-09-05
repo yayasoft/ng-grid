@@ -176,6 +176,13 @@ angular.module('ui.grid')
       offset = 1;
     }
 
+    if (self.isExpandable) {
+      var expandableCol = new GridColumn({name: 'expandableButtons', displayName: '', width: 40, enableColumnMenu: false, pinned: true}, 1, self);
+      expandableCol.cellTemplate = '<div class="ui-grid-cell uiGridExpandableButtonsCell"><div class="ui-grid-cell-contents"><button class="uiGridExpandableButton" ng-if="!row.isExpanded;" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)">E</button><button class="uiGridExpandableButton" ng-if="row.isExpanded" ng-click="row.isExpanded = false">C</button></div></div>';
+      self.columns.push(expandableCol);
+      offset = 2;
+    }
+
     // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
     if (self.columns.length > self.options.columnDefs.length) {
         self.columns.forEach(function (column, index) {
