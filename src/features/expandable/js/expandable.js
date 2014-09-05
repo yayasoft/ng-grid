@@ -52,6 +52,7 @@
             service.toggleRowExpansion(grid, row);
           }
         });
+        grid.refresh();
       },
       collapseAllRows: function(grid) {
         angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
@@ -59,6 +60,7 @@
             service.toggleRowExpansion(grid, row);
           }
         });
+        grid.refresh();
       },
       init: function (grid) {
         grid.options.expandable = {};
@@ -134,6 +136,8 @@
             var expandable = $templateCache.get('ui-grid/expandable');
             rowRepeatDiv.append(expandable);
             var expandedRowFillerElement = $templateCache.get('ui-grid/expandableScrollFiller');
+            var expandedRowElement = $templateCache.get('ui-grid/expandableRow');
+            rowRepeatDiv.append(expandedRowElement);
             rowRepeatDiv.append(expandedRowFillerElement);
             return {
               pre: function ($scope, $elm, $attrs, controllers) {
