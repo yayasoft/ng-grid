@@ -103,6 +103,7 @@
       function buildExpandedRow($elm, $scope, template) {
         var expandedRowElement = $compile(template)($scope);
         $elm.append(expandedRowElement);
+        $scope.row.expandedRendered = true;
       }
       return {
         replace: false,
@@ -118,12 +119,43 @@
                 });
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
+
+              $scope.$on('$destroy', function() {
+                $scope.row.expandedRendered = false;
+              });
             }
 
           };
         }
       };
     }]);
+
+  module.directive('uiGridRow',
+    ['$compile', '$log', '$templateCache',
+      function ($compile, $log, $templateCache) {
+        return {
+          priority: -200,
+          scope: false,
+          compile: function ($elm, $attrs) {
+            return {
+              pre: function ($scope, $elm, $attrs, controllers) {
+                $scope.row.shouldRenderExpand = function () {
+                  var ret = $scope.row.isExpanded && (!$scope.grid.isScrollingVertically || $scope.row.expandedRendered);
+                  return ret;
+                };
+
+                $scope.row.shouldRenderFiller = function () {
+                  var ret = $scope.row.isExpanded && ($scope.grid.isScrollingVertically && !$scope.row.expandedRendered);
+                  return ret;
+                };
+
+              },
+              post: function ($scope, $elm, $attrs, controllers) {
+              }
+            };
+          }
+        };
+      }]);
 
   module.directive('uiGridViewport',
     ['$compile', '$log', '$templateCache',
