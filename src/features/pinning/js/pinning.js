@@ -40,9 +40,8 @@
         // Register a column builder to add new menu items for pinning left and right
         grid.registerColumnBuilder(service.pinningColumnBuilder);
 
-        grid.renderContainers.left = new GridRenderContainer('left', grid, { disableColumnOffset: true });
-        grid.renderContainers.right = new GridRenderContainer('right', grid, { disableColumnOffset: true });
-
+        grid.createLeftContainer();
+        grid.createRightContainer();
       },
 
       defaultGridOptions: function (gridOptions) {
@@ -85,6 +84,29 @@
          *  <br/>Defaults to true
          */
         colDef.enablePinning = colDef.enablePinning === undefined ? gridOptions.enablePinning : colDef.enablePinning;
+
+
+        /**
+         *  @ngdoc object
+         *  @name pinnedLeft
+         *  @propertyOf  ui.grid.pinning.api:ColumnDef
+         *  @description Column is pinned left when grid is rendered
+         *  <br/>Defaults to false
+         */
+
+        /**
+         *  @ngdoc object
+         *  @name pinnedRight
+         *  @propertyOf  ui.grid.pinning.api:ColumnDef
+         *  @description Column is pinned right when grid is rendered
+         *  <br/>Defaults to false
+         */
+        if (colDef.pinnedLeft) {
+          col.renderContainer = 'left';
+        }
+        else if (colDef.pinnedRight) {
+          col.renderContainer = 'right';
+        }
 
         if (!colDef.enablePinning) {
           return;
