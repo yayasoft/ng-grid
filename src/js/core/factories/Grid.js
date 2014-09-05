@@ -170,7 +170,8 @@ angular.module('ui.grid')
     var builderPromises = [];
     var offset = 0;
     if (!gridUtil.isNullOrUndefined(this.options.rowHeader)) {
-      var col = new GridColumn({name: "", width: 50, enableColumnMenu: false, pinned: true}, 0, self);
+      var col = new GridColumn({name: 'rowHeader', displayName: '', width: 50, enableColumnMenu: false, pinned: true}, 0, self);
+      col.isRowHeader = true;
       self.columns.push(col);
       offset = 1;
     }
@@ -215,7 +216,7 @@ angular.module('ui.grid')
         $log.info('pre-compiling cell templates');
         var showRowHeader = !gridUtil.isNullOrUndefined(this.options.rowHeader);
         this.columns.forEach(function (col, index) {
-        if (showRowHeader && index === 0){
+        if (showRowHeader && col.isRowHeader){
           return;
         }
           var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
