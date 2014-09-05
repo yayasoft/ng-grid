@@ -36,18 +36,28 @@
       },
       toggleRowExpansion: function (grid, row) {
         row.isExpanded = !row.isExpanded;
+
+        if (row.isExpanded) {
+          row.height = row.grid.options.rowHeight + grid.options.expandable.expandableRowHeight;
+        }
+        else {
+          row.height = row.grid.options.rowHeight;
+        }
+
         grid.api.expandable.raise.rowExpandedStateChanged(row);
       },
       expandAllRows: function(grid, $scope) {
         angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
-              row.isExpanded = true;
-              grid.api.expandable.raise.rowExpandedStateChanged(row);
+          if (!row.isExpanded) {
+            service.toggleRowExpansion(grid, row);
+          }
         });
       },
       collapseAllRows: function(grid) {
         angular.forEach(grid.renderContainers.body.visibleRowCache, function(row) {
-          row.isExpanded = false;
-          grid.api.expandable.raise.rowExpandedStateChanged(row);
+          if (row.isExpanded) {
+            service.toggleRowExpansion(grid, row);
+          }
         });
       },
       init: function (grid) {
