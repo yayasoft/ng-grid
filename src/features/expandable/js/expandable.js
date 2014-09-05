@@ -52,7 +52,7 @@
       },
       init: function (grid) {
         grid.options.expandable = {};
-        grid.options.expandable.expandableRowHeight = 200;
+        grid.options.expandable.expandableRowHeight = 150;
         grid.isExpandable = true;
       }
     };
