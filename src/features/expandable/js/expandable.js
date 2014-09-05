@@ -138,15 +138,23 @@
     }]);
 
   module.directive('uiGridViewport',
-    ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants', '$interval',
-      function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants, $interval) {
+    ['$compile', '$log', '$templateCache',
+      function ($compile, $log, $templateCache) {
         return {
-          priority: -100,
+          priority: -200,
           scope: false,
-          link: function ($scope, $elm, $attrs) {
-
+          compile: function ($elm, $attrs) {
+            var rowRepeatDiv = angular.element($elm.children().children()[0]);
+            var expandedRowFillerElement = $templateCache.get('ui-grid/expandableScrollFiller');
+            rowRepeatDiv.append(expandedRowFillerElement);
+            return {
+              pre: function ($scope, $elm, $attrs, controllers) {
+              },
+              post: function ($scope, $elm, $attrs, controllers) {
+              }
+            };
           }
         };
-      }
-    ]);
+      }]);
+
 })();
