@@ -66,8 +66,6 @@
         //TODO: read these properties from grid options
         grid.options.expandable = {};
         grid.options.expandable.expandableRowHeight = 150;
-        //TODO: this param should be removed
-        grid.isExpandable = true;
       }
     };
     return service;
@@ -83,9 +81,14 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+              var expandableRowHeaderColDef = { name: 'expandableButtons', displayName: '', width: 40, enableColumnMenu: false };
+              var cellTemplate = '<div class="ui-grid-row-header-cell uiGridExpandableButtonsCell"><div class="ui-grid-cell-contents"><button class="uiGridExpandableButton" ng-if="!row.isExpanded;" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)">E</button><button class="uiGridExpandableButton" ng-if="row.isExpanded" ng-click="row.isExpanded = false">C</button></div></div>';
+              uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef, cellTemplate, null, 0);
               uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
+
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
+
             }
           };
         }

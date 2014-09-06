@@ -43,6 +43,7 @@ angular.module('ui.grid')
   self.columnsProcessors = [];
   self.styleComputations = [];
   self.viewportAdjusters = [];
+  self.rowHeaderColumns = [];
 
   // self.visibleRowCache = [];
 
@@ -205,6 +206,23 @@ angular.module('ui.grid')
     });
   };
 
+  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, cellTemplate, headerTemplate, index) {
+    var self = this;
+    //self.createLeftContainer();
+    var rowHeaderCol = new GridColumn(colDef, self.rowHeaderColumns.length + 1, self);
+    rowHeaderCol.isRowHeader = true;
+   /* if (self.isRTL()) {
+      rowHeaderCol.renderContainer = 'right';
+    }
+    else {
+      rowHeaderCol.renderContainer = 'left';
+    }*/
+    rowHeaderCol.cellTemplate = cellTemplate;
+    rowHeaderCol.enableFiltering = false;
+    rowHeaderCol.enableSorting = false;
+    self.rowHeaderColumns.push(rowHeaderCol);
+  };
+
   /**
    * @ngdoc function
    * @name buildColumns
@@ -217,20 +235,13 @@ angular.module('ui.grid')
     $log.debug('buildColumns');
     var self = this;
     var builderPromises = [];
-    var offset = 0;
-    if (!gridUtil.isNullOrUndefined(this.options.rowHeader)) {
-      var col = new GridColumn({name: 'rowHeader', displayName: '', width: 50, enableColumnMenu: false, pinned: true}, 0, self);
-      col.isRowHeader = true;
-      self.columns.push(col);
-      offset = 1;
-    }
+    var offset = self.rowHeaderColumns.length;
 
-    if (self.isExpandable) {
-      var expandableCol = new GridColumn({name: 'expandableButtons', displayName: '', width: 40, enableColumnMenu: false, pinned: true}, 1, self);
-      expandableCol.cellTemplate = '<div class="ui-grid-cell uiGridExpandableButtonsCell"><div class="ui-grid-cell-contents"><button class="uiGridExpandableButton" ng-if="!row.isExpanded;" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)">E</button><button class="uiGridExpandableButton" ng-if="row.isExpanded" ng-click="row.isExpanded = false">C</button></div></div>';
-      self.columns.push(expandableCol);
-      offset = 2;
-    }
+    //add row header columns to the grid columns array
+    angular.forEach(self.rowHeaderColumns, function (rowHeaderColumn) {
+      offset++;
+      self.columns.push(rowHeaderColumn);
+    });
 
     // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
     if (self.columns.length > self.options.columnDefs.length) {
@@ -269,14 +280,8 @@ angular.module('ui.grid')
  * @description precompiles all cell templates
  */
   Grid.prototype.preCompileCellTemplates = function() {
-        $log.info('pre-compiling cell templates');
-        var showRowHeader = !gridUtil.isNullOrUndefined(this.options.rowHeader);
         this.columns.forEach(function (col, index) {
-        if (showRowHeader && col.isRowHeader){
-          return;
-        }
           var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
-
           var compiledElementFn = $compile(html);
           col.compiledElementFn = compiledElementFn;
         });
