@@ -63,8 +63,10 @@
         grid.refresh();
       },
       init: function (grid) {
+        //TODO: read these properties from grid options
         grid.options.expandable = {};
         grid.options.expandable.expandableRowHeight = 150;
+        //TODO: this param should be removed
         grid.isExpandable = true;
       }
     };
@@ -93,38 +95,29 @@
   module.directive('uiGridExpandableRow',
   ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants','gridUtil','$interval','debounce',
     function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants, gridUtil, $interval, debounce) {
-      function getHeightFromCSSProperty(cssProperty) {
-        var height = 0;
-        if (cssProperty) {
-          height = Number(cssProperty.slice(0, cssProperty.length-2));
-        }
-        return isNaN(height)? 0: height;
-      }
-      function buildExpandedRow($elm, $scope, template) {
-        var expandedRowElement = $compile(template)($scope);
-        $elm.append(expandedRowElement);
-        $scope.row.expandedRendered = true;
-      }
+
       return {
         replace: false,
         priority: 0,
         require: '^uiGrid',
         scope: false,
+
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
               gridUtil.getTemplate($scope.grid.options.rowExpandableTemplate).then(
                 function (template) {
-                  buildExpandedRow($elm, $scope, template);
-                });
+                  var expandedRowElement = $compile(template)($scope);
+                  $elm.append(expandedRowElement);
+                  $scope.row.expandedRendered = true;
+              });
             },
-            post: function ($scope, $elm, $attrs, uiGridCtrl) {
 
+            post: function ($scope, $elm, $attrs, uiGridCtrl) {
               $scope.$on('$destroy', function() {
                 $scope.row.expandedRendered = false;
               });
             }
-
           };
         }
       };
