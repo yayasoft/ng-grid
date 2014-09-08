@@ -26,7 +26,7 @@ If gridOptions.rowExpandableTemplate is provided, then clicking on checboxes and
 
       $scope.gridOptions.rowHeader = {
         rowIndex: true,
-        rowHeaderWidth: 125
+        rowHeaderWidth: 40
       };
 
       $scope.gridOptions.columnDefs = [
