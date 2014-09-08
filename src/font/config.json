@@ -101,6 +101,12 @@
       "css": "sort-alt-down",
       "code": 59394,
       "src": "fontawesome"
+    },
+    {
+      "uid": "5d2d07f112b8de19f2c0dbfec3e42c05",
+      "css": "spin5",
+      "code": 59392,
+      "src": "fontelico"
     }
   ]
 }

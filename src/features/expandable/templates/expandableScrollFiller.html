@@ -1,5 +1,5 @@
-<div ng-if="row.shouldRenderFiller()"
-     style="float:left;margin-top: 2px;margin-bottom: 2px;"
+<div ng-if="!row.shouldRenderExpand()"
+     style="float:left;margin-top: 2px;margin-bottom: 2px;text-align: center;"
      ng-style="{width: (grid.getViewportWidth() - grid.options.rowHeader.rowHeaderWidth)
      ,height: grid.options.expandable.expandableRowHeight, 'margin-left': grid.options.rowHeader.rowHeaderWidth}"
-     >Loading...</div>
+     ><i class="ui-grid-icon-spin5 animate-spin" ng-style="{'margin-top': ( grid.options.expandable.expandableRowHeight/2)}"></i></div>
