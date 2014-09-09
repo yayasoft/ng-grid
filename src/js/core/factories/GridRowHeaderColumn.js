@@ -29,17 +29,6 @@
 
 		/**
      * @ngdoc function
-     * @name isExpanded
-     * @methodOf ui.grid.class:GridRowHeaderColumn
-     * @description Returns true or false whether row is expanded or not
-     */
-		GridRowHeaderColumn.prototype.isExpanded = function() {
-			var self = this;
-			return self.expanded;
-		};
-
-		/**
-     * @ngdoc function
      * @name getRowIndex
      * @methodOf ui.grid.class:GridRowHeaderColumn
      * @description Returns index of the row
@@ -48,30 +37,6 @@
 			var self = this;
 
 			return self.rowIndex;
-		};
-
-		/**
-     * @ngdoc function
-     * @name expand
-     * @methodOf ui.grid.class:GridRowHeaderColumn
-     * @description Triggers row expand
-     */
-		GridRowHeaderColumn.prototype.expand = function() {
-			var self = this;
-
-			self.expanded = true;
-		};
-
-		/**
-     * @ngdoc function
-     * @name close
-     * @methodOf ui.grid.class:GridRowHeaderColumn
-     * @description Triggers row close
-     */
-		GridRowHeaderColumn.prototype.close = function() {
-			var self = this;
-
-			self.expanded = false;
 		};
 
 		/**
