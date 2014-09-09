@@ -22,7 +22,7 @@ If gridOptions.rowExpandableTemplate is provided, then clicking on checboxes and
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
       $scope.gridOptions = {expandable:{}};
-      $scope.gridOptions.expandable.expandableRowHeight = 140;
+      $scope.gridOptions.expandable.expandableRowHeight = 150;
 
       $scope.gridOptions.rowHeader = {
         rowIndex: true,

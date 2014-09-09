@@ -6,7 +6,7 @@
   module.service('uiGridExpandableService', ['gridUtil', '$log', '$compile', function (gridUtil, $log, $compile) {
     var service = {
       initializeGrid: function (grid) {
-        service.init(grid);
+        //service.init(grid);
         var publicApi = {
           events: {
             expandable: {
@@ -61,12 +61,11 @@
           }
         });
         grid.refresh();
-      },
-      init: function (grid) {
-        //TODO: read these properties from grid options
-        grid.options.expandable = {};
-        grid.options.expandable.expandableRowHeight = 150;
       }
+/*
+      init: function (grid) {
+      }
+*/
     };
     return service;
   }]);
@@ -81,11 +80,11 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-              var expandableRowHeaderColDef = { name: 'expandableButtons', displayName: '', width: 40, enableColumnMenu: false };
+              var expandableRowHeaderColDef = { name: 'expandableButtons', displayName: '', width: 40,
+                enableColumnMenu: false };
               var cellTemplate = $templateCache.get('ui-grid/expandableRowHeader');
               uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef, cellTemplate, null, 0);
               uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
-
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
 

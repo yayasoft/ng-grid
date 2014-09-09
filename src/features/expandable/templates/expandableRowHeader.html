@@ -1,10 +1,6 @@
 <div class="ui-grid-row-header-cell uiGridExpandableButtonsCell">
     <div class="ui-grid-cell-contents">
-        <button class="uiGridExpandableButton" ng-if="!row.isExpanded;" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)">
-            E
-        </button>
-        <button class="uiGridExpandableButton" ng-if="row.isExpanded" ng-click="row.isExpanded = false">
-            C
-        </button>
+        <i class="ui-grid-icon-plus-squared" ng-if="!row.isExpanded;" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)"></i>
+        <i class="ui-grid-icon-minus-squared" ng-if="row.isExpanded;" ng-click="row.isExpanded = false"></i>
     </div>
 </div>
