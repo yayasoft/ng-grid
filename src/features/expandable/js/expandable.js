@@ -71,8 +71,8 @@
     return service;
   }]);
 
-  module.directive('uiGridExpandable', ['$log', 'uiGridExpandableService',
-    function ($log, uiGridExpandableService) {
+  module.directive('uiGridExpandable', ['$log', 'uiGridExpandableService', '$templateCache',
+    function ($log, uiGridExpandableService, $templateCache) {
       return {
         replace: true,
         priority: 0,
@@ -82,7 +82,7 @@
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
               var expandableRowHeaderColDef = { name: 'expandableButtons', displayName: '', width: 40, enableColumnMenu: false };
-              var cellTemplate = '<div class="ui-grid-row-header-cell uiGridExpandableButtonsCell"><div class="ui-grid-cell-contents"><button class="uiGridExpandableButton" ng-if="!row.isExpanded;" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)">E</button><button class="uiGridExpandableButton" ng-if="row.isExpanded" ng-click="row.isExpanded = false">C</button></div></div>';
+              var cellTemplate = $templateCache.get('ui-grid/expandableRowHeader');
               uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef, cellTemplate, null, 0);
               uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
 
