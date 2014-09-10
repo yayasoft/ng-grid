@@ -226,12 +226,12 @@ angular.module('ui.grid')
     //self.createLeftContainer();
     var rowHeaderCol = new GridColumn(colDef, self.rowHeaderColumns.length + 1, self);
     rowHeaderCol.isRowHeader = true;
-   /* if (self.isRTL()) {
+    if (self.isRTL()) {
       rowHeaderCol.renderContainer = 'right';
     }
     else {
       rowHeaderCol.renderContainer = 'left';
-    }*/
+    }
     rowHeaderCol.cellTemplate = cellTemplate;
     rowHeaderCol.enableFiltering = false;
     rowHeaderCol.enableSorting = false;
