@@ -1,8 +1,23 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('Grid', ['$log', '$q', '$compile', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer', 'GridRowHeaderColumn', '$timeout',
-    function($log, $q, $compile, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer, GridRowHeaderColumn, $timeout) {
+.factory('Grid', ['$log', '$q', '$compile', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer', '$timeout',
+    function($log, $q, $compile, $parse, gridUtil, uiGridConstants, GridOptions, GridColumn, GridRow, GridApi, rowSorter, rowSearcher, GridRenderContainer, $timeout) {
+
+/**
+ * @ngdoc object
+ * @name ui.grid.core
+ * @description Not sure this needs to be defined, I'll see
+ *
+ */
+/**
+ * @ngdoc object
+ * @name ui.grid.core.api:PublicApi
+
+  * @description Public Api for the core grid features
+ *
+ */
+
 
 /**
    * @ngdoc function
@@ -206,23 +221,17 @@ angular.module('ui.grid')
     });
   };
 
-    /**
-    * @ngdoc function
-    * @name addRowHeaderColumn
-    * @methodOf ui.grid.class:Grid
-    * @description addes a row header column to the grid rowHeaderColumns array
-    */
-    Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, cellTemplate, headerTemplate, index) {
+  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, cellTemplate, headerTemplate, index) {
     var self = this;
-    self.createLeftContainer();
+    //self.createLeftContainer();
     var rowHeaderCol = new GridColumn(colDef, self.rowHeaderColumns.length + 1, self);
     rowHeaderCol.isRowHeader = true;
-    if (self.isRTL()) {
+   /* if (self.isRTL()) {
       rowHeaderCol.renderContainer = 'right';
     }
     else {
       rowHeaderCol.renderContainer = 'left';
-    }
+    }*/
     rowHeaderCol.cellTemplate = cellTemplate;
     rowHeaderCol.enableFiltering = false;
     rowHeaderCol.enableSorting = false;
