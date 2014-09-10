@@ -18,7 +18,7 @@ If gridOptions.rowExpandableTemplate is provided, then clicking on checboxes and
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ui.grid', 'ui.grid.expandable']);
+    var app = angular.module('app', ['ui.grid', 'ui.grid.expandable', 'ui.grid.pinning']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
       $scope.gridOptions = {expandable:{}};
@@ -30,10 +30,10 @@ If gridOptions.rowExpandableTemplate is provided, then clicking on checboxes and
       };
 
       $scope.gridOptions.columnDefs = [
-        { name: 'id' },
-        { name: 'name'},
-        { name: 'age', displayName: 'Age (not focusable)', allowCellFocus : false },
-        { name: 'address.city' }
+        { name: 'id', width: 200 },
+        { name: 'name', width: 200},
+        { name: 'age', displayName: 'Age (not focusable)', allowCellFocus : false, width: 200 },
+        { name: 'address.city', width: 200 }
       ];
 
 
@@ -69,7 +69,7 @@ If gridOptions.rowExpandableTemplate is provided, then clicking on checboxes and
     <div ng-controller="MainCtrl">
       <button ng-click="expandAllRows()">expand all rows</button>
       <button ng-click="collapseAllRows()">collapse all rows</button>
-      <div ui-grid="gridOptions" ui-grid-expandable class="grid"></div>
+      <div ui-grid="gridOptions" ui-grid-pinning ui-grid-expandable class="grid"></div>
     </div>
   </file>
   <file name="main.css">
@@ -79,6 +79,6 @@ If gridOptions.rowExpandableTemplate is provided, then clicking on checboxes and
     }
   </file>
   <file name="rowExpandableTemplate.html">
-    <div ui-grid="row.gridOptions" style="height:140px;"></div>
+    <div ui-grid="row.gridOptions" ui-grid-pinning style="height:140px;"></div>
   </file>
 </example>
