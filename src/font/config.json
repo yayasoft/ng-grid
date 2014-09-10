@@ -15,7 +15,7 @@
     {
       "uid": "f755a58fb985eeb70bd47d9b31892a34",
       "css": "minus-squared",
-      "code": 59394,
+      "code": 59408,
       "src": "fontawesome"
     },
     {
@@ -99,7 +99,7 @@
     {
       "uid": "4109c474ff99cad28fd5a2c38af2ec6f",
       "css": "filter",
-      "code": 59392,
+      "code": 59394,
       "src": "fontawesome"
     },
     {
@@ -117,7 +117,7 @@
     {
       "uid": "5d2d07f112b8de19f2c0dbfec3e42c05",
       "css": "spin5",
-      "code": 59392,
+      "code": 59393,
       "src": "fontelico"
     }
   ]
