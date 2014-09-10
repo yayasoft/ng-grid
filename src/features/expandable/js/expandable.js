@@ -6,7 +6,6 @@
   module.service('uiGridExpandableService', ['gridUtil', '$log', '$compile', function (gridUtil, $log, $compile) {
     var service = {
       initializeGrid: function (grid) {
-        //service.init(grid);
         var publicApi = {
           events: {
             expandable: {
@@ -62,10 +61,6 @@
         });
         grid.refresh();
       }
-/*
-      init: function (grid) {
-      }
-*/
     };
     return service;
   }]);
@@ -87,7 +82,6 @@
               uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
-
             }
           };
         }
