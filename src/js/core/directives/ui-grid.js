@@ -202,47 +202,19 @@
         return $scope.grid.getCellValue(row, col);
       };
 
-      $scope.grid.refreshRows = self.refreshRows = function refreshRows() {
-        return self.grid.processRowsProcessors(self.grid.rows)
-          .then(function (renderableRows) {
-            self.grid.setVisibleRows(renderableRows);
-
-            self.redrawRows();
-
-            self.refreshCanvas();
-          });
+      // provided only for backward compatibility, moved to grid and ideally would be removed from here
+      self.refreshRows = function refreshRows() {
+        return $scope.grid.refreshRows();
       };
 
-      $scope.grid.refresh = self.refresh = function refresh() {
-        $log.debug('grid refresh');
-
-        var p1 = self.grid.processRowsProcessors(self.grid.rows).then(function (renderableRows) {
-          self.grid.setVisibleRows(renderableRows);
-        });
-
-        var p2 = self.grid.processColumnsProcessors(self.grid.columns).then(function (renderableColumns) {
-          self.grid.setVisibleColumns(renderableColumns);
-        });
-
-        return $q.all([p1, p2]).then(function () {
-          self.redrawInPlace();
-
-          self.refreshCanvas(true);
-        });
+      // provided only for backward compatibility, moved to grid and ideally would be removed from here
+      self.refresh = function refresh() {
+        $scope.grid.refresh();
       };
 
-      // Redraw the rows and columns based on our current scroll position
+      // provided only for backward compatibility, moved to grid and ideally would be removed from here
       self.redrawInPlace = function redrawInPlace() {
-        // $log.debug('redrawInPlace');
-
-        for (var i in self.grid.renderContainers) {
-          var container = self.grid.renderContainers[i];
-
-          // $log.debug('redrawing container', i);
-
-          container.adjustRows(container.prevScrollTop, null);
-          container.adjustColumns(container.prevScrollLeft, null);
-        }
+        $scope.grid.redrawInPlace();
       };
 
       /* Sorting Methods */
