@@ -258,7 +258,7 @@ angular.module('ui.grid')
     rowHeaderCol.enableFiltering = false;
     rowHeaderCol.enableSorting = false;
     self.rowHeaderColumns.push(rowHeaderCol);
-    self.rowHeaderWidth = (colDef.width?colDef.width:30)+10;
+    self.rowHeaderWidth = 0;//(colDef.width?colDef.width:30)+10; - comment to be removed after container issue is fixed
   };
 
   /**
