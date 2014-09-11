@@ -50,6 +50,7 @@ angular.module('ui.grid')
   self.headerHeight = self.options.headerRowHeight;
   self.footerHeight = self.options.showFooter === true ? self.options.footerRowHeight : 0;
 
+  self.rtl = false;
   self.gridHeight = 0;
   self.gridWidth = 0;
   self.columnBuilders = [];
@@ -133,7 +134,18 @@ angular.module('ui.grid')
   self.api = new GridApi(self);
 };
 
-  /**
+    /**
+     * @ngdoc function
+     * @name isRTL
+     * @methodOf ui.grid.class:Grid
+     * @description Returns true if grid is RightToLeft
+     */
+    Grid.prototype.isRTL = function () {
+      return this.rtl;
+    };
+
+
+      /**
    * @ngdoc function
    * @name registerColumnBuilder
    * @methodOf ui.grid.class:Grid
@@ -221,18 +233,27 @@ angular.module('ui.grid')
     });
   };
 
-  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, cellTemplate, headerTemplate, index) {
+  /**
+  * @ngdoc function
+  * @name addRowHeaderColumn
+  * @methodOf ui.grid.class:Grid
+  * @description adds a row header column to the grid
+  * @param {object} column def
+  */
+  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, index) {
     var self = this;
     //self.createLeftContainer();
     var rowHeaderCol = new GridColumn(colDef, self.rowHeaderColumns.length + 1, self);
     rowHeaderCol.isRowHeader = true;
     if (self.isRTL()) {
+      self.createRightContainer();
       rowHeaderCol.renderContainer = 'right';
     }
     else {
+      self.createLeftContainer();
       rowHeaderCol.renderContainer = 'left';
     }
-    rowHeaderCol.cellTemplate = cellTemplate;
+    rowHeaderCol.cellTemplate = colDef.cellTemplate;
     rowHeaderCol.enableFiltering = false;
     rowHeaderCol.enableSorting = false;
     self.rowHeaderColumns.push(rowHeaderCol);
@@ -260,11 +281,11 @@ angular.module('ui.grid')
 
     // Synchronize self.columns with self.options.columnDefs so that columns can also be removed.
     if (self.columns.length > self.options.columnDefs.length) {
-        self.columns.forEach(function (column, index) {
-            if (!self.getColDef(column.name)) {
-                self.columns.splice(index, 1);
-            }
-        });
+      self.columns.forEach(function (column, index) {
+        if (!self.getColDef(column.name)) {
+          self.columns.splice(index, 1);
+        }
+      });
     }
 
     self.options.columnDefs.forEach(function (colDef, index) {
@@ -282,7 +303,6 @@ angular.module('ui.grid')
       self.columnBuilders.forEach(function (builder) {
         builderPromises.push(builder.call(self, colDef, col, self.options));
       });
-
     });
 
     return $q.all(builderPromises);
@@ -295,8 +315,9 @@ angular.module('ui.grid')
  * @description precompiles all cell templates
  */
   Grid.prototype.preCompileCellTemplates = function() {
-        this.columns.forEach(function (col, index) {
-          var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
+        this.columns.forEach(function (col) {
+          var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
+
           var compiledElementFn = $compile(html);
           col.compiledElementFn = compiledElementFn;
         });
@@ -309,7 +330,7 @@ angular.module('ui.grid')
    * @description creates the left render container if it doesn't already exist
    */
   Grid.prototype.createLeftContainer = function() {
-    if (!this.renderContainers.left) {
+    if (!this.hasLeftContainer()) {
       this.renderContainers.left = new GridRenderContainer('left', this, { disableColumnOffset: true });
     }
   };
@@ -321,12 +342,33 @@ angular.module('ui.grid')
    * @description creates the right render container if it doesn't already exist
    */
   Grid.prototype.createRightContainer = function() {
-    if (!this.renderContainers.right) {
+    if (!this.hasRightContainer()) {
       this.renderContainers.right = new GridRenderContainer('right', this, { disableColumnOffset: true });
     }
   };
 
   /**
+   * @ngdoc function
+   * @name hasLeftContainer
+   * @methodOf ui.grid.class:Grid
+   * @description returns true if leftContainer exists
+   */
+  Grid.prototype.hasLeftContainer = function() {
+    return this.renderContainers.left !== undefined;
+  };
+
+  /**
+   * @ngdoc function
+   * @name hasLeftContainer
+   * @methodOf ui.grid.class:Grid
+   * @description returns true if rightContainer exists
+   */
+  Grid.prototype.hasRightContainer = function() {
+    return this.renderContainers.right !== undefined;
+  };
+
+
+      /**
    * undocumented function
    * @name preprocessColDef
    * @methodOf ui.grid.class:Grid

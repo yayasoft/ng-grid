@@ -77,8 +77,8 @@
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
               var expandableRowHeaderColDef = { name: 'expandableButtons', displayName: '', width: 40,
                 enableColumnMenu: false };
-              var cellTemplate = $templateCache.get('ui-grid/expandableRowHeader');
-              uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef, cellTemplate, null, 0);
+              expandableRowHeaderColDef.cellTemplate = $templateCache.get('ui-grid/expandableRowHeader');
+              uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef, 0);
               uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {

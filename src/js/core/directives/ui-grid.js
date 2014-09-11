@@ -12,6 +12,7 @@
       // Extend options with ui-grid attribute reference
       self.grid = gridClassFactory.createGrid($scope.uiGrid);
       $elm.addClass('grid' + self.grid.id);
+      self.grid.rtl = $elm.css('direction') === 'rtl';
 
       //add optional reference to externalScopes function to controller
       //so it can be retrieved in lower elements that have isolate scope
@@ -21,24 +22,6 @@
 
       //all properties of grid are available on scope
       $scope.grid = self.grid;
-      // Function to pre-compile all the cell templates when the column definitions change
-      function preCompileCellTemplates(columns) {
-        $log.info('pre-compiling cell templates');
-        columns.forEach(function (col, index) {
-          // Avoid compiling element if it is a row header cell
-          if (!gridUtil.isNullOrUndefined(self.grid.options.rowHeader) && index === 0) {
-            return;
-          }
-          var html = col.cellTemplate.replace(uiGridConstants.COL_FIELD, 'getCellValue(row, col)');
-
-          var compiledElementFn = $compile(html);
-          col.compiledElementFn = compiledElementFn;
-        });
-      }
-
-      //TODO: Move this.
-      $scope.groupings = [];
-
 
       if ($attrs.uiGridColumns) {
         $attrs.$observe('uiGridColumns', function(value) {
@@ -47,14 +30,9 @@
             .then(function(){
               self.grid.preCompileCellTemplates();
 
-              self.refreshCanvas(true);
+              self.grid.refreshCanvas(true);
             });
         });
-      }
-      else {
-        if (self.grid.options.columnDefs.length > 0) {
-        //   self.grid.buildColumns();
-        }
       }
 
 
@@ -76,7 +54,7 @@
 
               self.grid.preCompileCellTemplates();
 
-              self.refreshCanvas(true);
+              self.grid.refreshCanvas(true);
             });
         }
       }
@@ -100,11 +78,11 @@
             self.grid.modifyRows(n)
               .then(function () {
                 // if (self.viewport) {
-                  self.redrawInPlace();
+                  self.grid.redrawInPlace();
                 // }
 
                 $scope.$evalAsync(function() {
-                  self.refreshCanvas(true);
+                  self.grid.refreshCanvas(true);
                 });
               });
           });
@@ -117,72 +95,9 @@
         columnDefWatchCollectionDereg();
       });
 
-      // TODO(c0bra): Do we need to destroy this watch on $destroy?
       $scope.$watch(function () { return self.grid.styleComputations; }, function() {
-        self.refreshCanvas(true);
+        self.grid.refreshCanvas(true);
       });
-
-      // Refresh the canvas drawable size
-      $scope.grid.refreshCanvas = self.refreshCanvas = function(buildStyles) {
-        if (buildStyles) {
-          self.grid.buildStyles($scope);
-        }
-
-        var p = $q.defer();
-
-        // Get all the header heights
-        var containerHeadersToRecalc = [];
-        for (var containerId in self.grid.renderContainers) {
-          if (self.grid.renderContainers.hasOwnProperty(containerId)) {
-            var container = self.grid.renderContainers[containerId];
-
-            if (container.header) {
-              containerHeadersToRecalc.push(container);
-            }
-          }
-        }
-
-        if (containerHeadersToRecalc.length > 0) {
-          // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
-          $timeout(function() {
-            // var oldHeaderHeight = self.grid.headerHeight;
-            // self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
-
-            var rebuildStyles = false;
-
-            // Get all the header heights
-            for (var i = 0; i < containerHeadersToRecalc.length; i++) {
-              var container = containerHeadersToRecalc[i];
-
-              if (container.header) {
-                var oldHeaderHeight = container.headerHeight;
-                var headerHeight = gridUtil.outerElementHeight(container.header);
-                container.headerHeight = headerHeight;
-
-                if (oldHeaderHeight !== headerHeight) {
-                  rebuildStyles = true;
-                }
-              }
-            }
-
-            // Rebuild styles if the header height has changed
-            //   The header height is used in body/viewport calculations and those are then used in other styles so we need it to be available
-            if (buildStyles && rebuildStyles) {
-              self.grid.buildStyles($scope);
-            }
-
-            p.resolve();
-          });
-        }
-        else {
-          // Timeout still needs to be here to trigger digest after styles have been rebuilt
-          $timeout(function() {
-            p.resolve();
-          });
-        }
-        self.grid.ready = p.promise;
-        return p.promise;
-      };
 
       $scope.grid.queueRefresh = self.queueRefresh = function queueRefresh() {
         if (self.refreshCanceler) {
@@ -190,35 +105,13 @@
         }
 
         self.refreshCanceler = $timeout(function () {
-          self.refreshCanvas(true);
+          self.grid.refreshCanvas(true);
         });
 
         self.refreshCanceler.then(function () {
           self.refreshCanceler = null;
         });
       };
-
-      self.getCellValue = function(row, col) {
-        return $scope.grid.getCellValue(row, col);
-      };
-
-      // provided only for backward compatibility, moved to grid and ideally would be removed from here
-      self.refreshRows = function refreshRows() {
-        return $scope.grid.refreshRows();
-      };
-
-      // provided only for backward compatibility, moved to grid and ideally would be removed from here
-      self.refresh = function refresh() {
-        $scope.grid.refresh();
-      };
-
-      // provided only for backward compatibility, moved to grid and ideally would be removed from here
-      self.redrawInPlace = function redrawInPlace() {
-        $scope.grid.redrawInPlace();
-      };
-
-      /* Sorting Methods */
-
 
       /* Event Methods */
 
@@ -244,9 +137,6 @@
         $compile(elm)($scope);
       };
 
-      $scope.grid.isRTL = self.isRTL = function isRTL() {
-        return $elm.css('direction') === 'rtl';
-      };
     }]);
 
 /**
@@ -335,7 +225,46 @@ angular.module('ui.grid').directive('uiGrid',
               }
 
               // Run initial canvas refresh
-              uiGridCtrl.refreshCanvas();
+              grid.refreshCanvas();
+
+              //add pinned containers for row headers support
+              //moved from pinning feature
+              var left = angular.element('<div ng-if="grid.hasLeftContainer()" style="width: 0" ui-grid-pinned-container="\'left\'"></div>');
+              $elm.prepend(left);
+              uiGridCtrl.innerCompile(left);
+
+              var right = angular.element('<div  ng-if="grid.hasRightContainer()" style="width: 0" ui-grid-pinned-container="\'right\'"></div>');
+              $elm.append(right);
+              uiGridCtrl.innerCompile(right);
+
+
+              //if we add a left container after render, we need to watch and react
+              $scope.$watch(function () { return grid.hasLeftContainer();}, function (newValue, oldValue) {
+                if (newValue === oldValue) {
+                  return;
+                }
+
+                //todo: remove this code.  it was commented out after moving from pinning because body is already float:left
+//                var bodyContainer = angular.element($elm[0].querySelectorAll('[container-id="body"]'));
+//                if (newValue){
+//                  bodyContainer.attr('style', 'float: left; position: inherit');
+//                }
+//                else {
+//                  bodyContainer.attr('style', 'float: left; position: relative');
+//                }
+
+                grid.refreshCanvas(true);
+              });
+
+              //if we add a right container after render, we need to watch and react
+              $scope.$watch(function () { return grid.hasRightContainer();}, function (newValue, oldValue) {
+                if (newValue === oldValue) {
+                  return;
+                }
+                grid.refreshCanvas(true);
+              });
+
+
 
               // Resize the grid on window resize events
               function gridResize($event) {
