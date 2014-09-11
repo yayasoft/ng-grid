@@ -128,13 +128,16 @@
           compile: function ($elm, $attrs) {
             return {
               pre: function ($scope, $elm, $attrs, controllers) {
-                $scope.row.shouldRenderExpand = function () {
-                  var ret = $scope.row.isExpanded && (!$scope.grid.isScrollingVertically || $scope.row.expandedRendered);
+
+                $scope.expandableRow = {};
+
+                $scope.expandableRow.shouldRenderExpand = function () {
+                  var ret = $scope.colContainer.name === 'body' &&  $scope.row.isExpanded && (!$scope.grid.isScrollingVertically || $scope.row.expandedRendered);
                   return ret;
                 };
 
-                $scope.row.shouldRenderFiller = function () {
-                  var ret = $scope.row.isExpanded && ($scope.grid.isScrollingVertically && !$scope.row.expandedRendered);
+                $scope.expandableRow.shouldRenderFiller = function () {
+                  var ret = $scope.row.isExpanded && ( $scope.colContainer.name !== 'body' || ($scope.grid.isScrollingVertically && !$scope.row.expandedRendered));
                   return ret;
                 };
 
