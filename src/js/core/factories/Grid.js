@@ -214,6 +214,16 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description uses the first row of data to assign colDef.type for any types not defined.
    */
+  /**
+   * @ngdoc property
+   * @name type
+   * @propertyOf ui.grid.class:GridOptions.columnDef
+   * @description the type of the column, used in sorting.  If not provided then the 
+   * grid will guess the type.  Add this only if the grid guessing is not to your
+   * satisfaction.  Refer to {@link ui.grid.service:GridUtil.guessType gridUtil.guessType} for
+   * a list of values the grid knows about.
+   *
+   */
   Grid.prototype.assignTypes = function(){
     var self = this;
     self.options.columnDefs.forEach(function (colDef, index) {
@@ -946,6 +956,27 @@ angular.module('ui.grid')
     self.gridHeight = gridUtil.elementHeight(self.element);
 
     self.queueRefresh();
+  };
+
+  /**
+   * @ngdoc function
+   * @name queueRefresh
+   * @methodOf ui.grid.class:Grid
+   * @description todo: @c0bra can you document this method?
+   */
+  Grid.prototype.queueRefresh = function queueRefresh() {
+    var self = this;
+    if (self.refreshCanceller) {
+      $timeout.cancel(self.refreshCanceller);
+    }
+
+    self.refreshCanceller = $timeout(function () {
+      self.refreshCanvas(true);
+    });
+
+    self.refreshCanceller.then(function () {
+      self.refreshCanceller = null;
+    });
   };
 
   /**

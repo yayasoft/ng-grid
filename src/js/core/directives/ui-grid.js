@@ -265,13 +265,12 @@ angular.module('ui.grid').directive('uiGrid',
               });
 
 
-
               // Resize the grid on window resize events
               function gridResize($event) {
                 grid.gridWidth = $scope.gridWidth = gridUtil.elementWidth($elm);
                 grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 
-                uiGridCtrl.queueRefresh();
+                grid.queueRefresh();
               }
 
               angular.element($window).on('resize', gridResize);
