@@ -15,11 +15,6 @@
       COLUMN_MENU_SHOWN: 'uiGridColMenuShown',
       ITEM_DRAGGING: 'uiGridItemDragStart' // For any item being dragged
     },
-    rowHeaderTypes: {
-      CHECKBOX: 'checkbox',
-      BUTTON: 'button',
-      ROW_INDEX: 'rowIndex'
-    },
     // copied from http://www.lsauer.com/2011/08/javascript-keymap-keycodes-in-json.html
     keymap: {
       TAB: 9,

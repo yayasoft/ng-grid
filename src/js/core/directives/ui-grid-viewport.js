@@ -27,7 +27,6 @@
           $scope.rowContainer = containerCtrl.rowContainer;
           $scope.colContainer = containerCtrl.colContainer;
 
-
           // Register this viewport with its container 
           containerCtrl.viewport = $elm;
 
@@ -35,10 +34,12 @@
             var newScrollTop = $elm[0].scrollTop;
             // var newScrollLeft = $elm[0].scrollLeft;
             var newScrollLeft = gridUtil.normalizeScrollLeft($elm);
+
             // Handle RTL here
 
             if (newScrollLeft !== colContainer.prevScrollLeft) {
               var xDiff = newScrollLeft - colContainer.prevScrollLeft;
+
               var horizScrollLength = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
               var horizScrollPercentage = newScrollLeft / horizScrollLength;
 

@@ -14,6 +14,7 @@
       $elm.addClass('grid' + self.grid.id);
       self.grid.rtl = $elm.css('direction') === 'rtl';
 
+
       //add optional reference to externalScopes function to controller
       //so it can be retrieved in lower elements that have isolate scope
       self.getExternalScopes = $scope.getExternalScopes;
@@ -99,19 +100,6 @@
         self.grid.refreshCanvas(true);
       });
 
-      $scope.grid.queueRefresh = self.queueRefresh = function queueRefresh() {
-        if (self.refreshCanceler) {
-          $timeout.cancel(self.refreshCanceler);
-        }
-
-        self.refreshCanceler = $timeout(function () {
-          self.grid.refreshCanvas(true);
-        });
-
-        self.refreshCanceler.then(function () {
-          self.refreshCanceler = null;
-        });
-      };
 
       /* Event Methods */
 

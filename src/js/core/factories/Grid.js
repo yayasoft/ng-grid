@@ -7,8 +7,7 @@ angular.module('ui.grid')
 /**
  * @ngdoc object
  * @name ui.grid.core.api:PublicApi
-
-  * @description Public Api for the core grid features
+ * @description Public Api for the core grid features
  *
  */
 

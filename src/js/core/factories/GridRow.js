@@ -56,15 +56,73 @@ angular.module('ui.grid')
     // Default to true
     this.visible = true;
 
-      /**
-       *  @ngdoc object
-       *  @name height
-       *  @propertyOf  ui.grid.class:GridRow
-       *  @description height of each individual row
-       */
-      this.height = grid.options.rowHeight;
+  /**
+    *  @ngdoc object
+    *  @name height
+    *  @propertyOf  ui.grid.class:GridRow
+    *  @description height of each individual row
+    */
+    this.height = grid.options.rowHeight;
 
-   }
+    /**
+     * @ngdoc function
+     * @name setRowInvisible
+     * @methodOf  ui.grid.core.api:PublicApi
+     * @description Sets an override on the row to make it always invisible,
+     * which will override any filtering or other visibility calculations.
+     * If the row is currently visible then sets it to invisible and calls
+     * both grid refresh and emits the rowsVisibleChanged event
+     * @param {object} rowEntity gridOptions.data[] array instance
+     */
+    if (!this.grid.api.core.setRowInvisible){
+      this.grid.api.registerMethod( 'core', 'setRowInvisible', this.setRowInvisible );
+    }
+
+    /**
+     * @ngdoc function
+     * @name clearRowInvisible
+     * @methodOf  ui.grid.core.api:PublicApi
+     * @description Clears any override on visibility for the row so that it returns to
+     * using normal filtering and other visibility calculations.
+     * If the row is currently invisible then sets it to visible and calls
+     * both grid refresh and emits the rowsVisibleChanged event
+     * TODO: if a filter is active then we can't just set it to visible?
+     * @param {object} rowEntity gridOptions.data[] array instance
+     */
+    if (!this.grid.api.core.clearRowInvisible){
+      this.grid.api.registerMethod( 'core', 'clearRowInvisible', this.clearRowInvisible );
+    }
+
+    /**
+     * @ngdoc function
+     * @name getVisibleRows
+     * @methodOf  ui.grid.core.api:PublicApi
+     * @description Returns all visible rows
+     * @param {Grid} grid the grid you want to get visible rows from
+     * @returns {array} an array of gridRow
+     */
+    if (!this.grid.api.core.getVisibleRows){
+      this.grid.api.registerMethod( 'core', 'getVisibleRows', this.getVisibleRows );
+    }
+
+    /**
+     * @ngdoc event
+     * @name rowsVisibleChanged
+     * @eventOf  ui.grid.core.api:PublicApi
+     * @description  is raised after the rows that are visible
+     * change.  The filtering is zero-based, so it isn't possible
+     * to say which rows changed (unlike in the selection feature).
+     * We can plausibly know which row was changed when setRowInvisible
+     * is called, but in that situation the user already knows which row
+     * they changed.  When a filter runs we don't know what changed,
+     * and that is the one that would have been useful.
+     *
+     */
+    if (!this.grid.api.core.raise.rowsVisibleChanged){
+      this.grid.api.registerEvent( 'core', 'rowsVisibleChanged' );
+    }
+
+  }
 
   /**
    * @ngdoc function
@@ -91,8 +149,8 @@ angular.module('ui.grid')
   GridRow.prototype.getEntityQualifiedColField = function(col) {
     return gridUtil.preEval('entity.' + col.field);
   };
-  
-  
+
+
   /**
    * @ngdoc function
    * @name setRowInvisible
@@ -107,20 +165,20 @@ angular.module('ui.grid')
   GridRow.prototype.setRowInvisible = function (row) {
     if (row !== null) {
       row.forceInvisible = true;
-      
+
       if ( row.visible ){
         row.visible = false;
         row.grid.refresh();
         row.grid.api.core.raise.rowsVisibleChanged();
       }
-    }        
+    }
   };
 
   /**
    * @ngdoc function
    * @name clearRowInvisible
    * @methodOf ui.grid.class:GridRow
-   * @description Clears any override on the row visibility, returning it 
+   * @description Clears any override on the row visibility, returning it
    * to normal visibility calculations.  If the row is currently invisible
    * then sets it to visible and calls refresh and emits the rowsVisibleChanged
    * event
@@ -131,13 +189,13 @@ angular.module('ui.grid')
   GridRow.prototype.clearRowInvisible = function (row) {
     if (row !== null) {
       row.forceInvisible = false;
-      
+
       if ( !row.visible ){
         row.visible = true;
         row.grid.refresh();
         row.grid.api.core.raise.rowsVisibleChanged();
       }
-    }        
+    }
   };
 
   /**
@@ -154,7 +212,7 @@ angular.module('ui.grid')
     return grid.rows.filter(function (row) {
       return row.visible;
     });
-  };  
+  };
 
   return GridRow;
 }]);
