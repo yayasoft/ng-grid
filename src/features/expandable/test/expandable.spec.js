@@ -1,6 +1,6 @@
 describe('ui.grid.expandable', function () {
 
-  var scope;
+  var scope, element, timeout;
 
   beforeEach(module('ui.grid.expandable'));
 
@@ -8,6 +8,7 @@ describe('ui.grid.expandable', function () {
 
     var $compile = _$compile_;
     scope = $rootScope;
+    timeout = $timeout;
 
     scope.gridOptions = {};
     scope.gridOptions.data = [
@@ -22,8 +23,8 @@ describe('ui.grid.expandable', function () {
       scope.grid = gridApi.grid;
     };
 
-    $httpBackend.when('GET', 'rowExpandableTemplate.html').respond("dummy");
-    var element = angular.element('<div class="col-md-5" ui-grid="gridOptions" ui-grid-expandable></div>');
+    $httpBackend.when('GET', 'rowExpandableTemplate.html').respond("<div class='test'></div>");
+    element = angular.element('<div class="col-md-5" ui-grid="gridOptions" ui-grid-expandable></div>');
 
     $timeout(function () {
       $compile(element)(scope);
@@ -42,11 +43,11 @@ describe('ui.grid.expandable', function () {
 
   it('expandAll and collapseAll should set and unset row.isExpanded', function () {
     scope.gridApi.expandable.expandAllRows();
-    scope.grid.renderContainers.body.visibleRowCache.forEach(function(row) {
+    scope.grid.rows.forEach(function(row) {
       expect(row.isExpanded).toBe(true);
     });
     scope.gridApi.expandable.collapseAllRows();
-    scope.grid.renderContainers.body.visibleRowCache.forEach(function(row) {
+    scope.grid.rows.forEach(function(row) {
       expect(row.isExpanded).toBe(false);
     });
   });
@@ -56,7 +57,16 @@ describe('ui.grid.expandable', function () {
     scope.gridApi.expandable.on.rowExpandedStateChanged(scope,function(row){
       functionCalled = true;
     });
-    scope.gridApi.expandable.toggleRowExpansion(scope.grid.renderContainers.body.visibleRowCache[0].entity);
+    scope.gridApi.expandable.toggleRowExpansion(scope.grid.rows[0].entity);
     expect(functionCalled).toBe(true);
+  });
+
+  it('subgrid should be addeed to the dom when we expand row', function () {
+    expect(element.find('.test').length).toBe(0);
+    scope.gridApi.expandable.toggleRowExpansion(scope.grid.rows[0].entity);
+    scope.$digest();
+    timeout(function () {
+      expect(element.find('.test').length).toBe(1);
+    });
   });
 });
