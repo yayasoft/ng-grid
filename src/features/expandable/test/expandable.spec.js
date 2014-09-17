@@ -1,13 +1,62 @@
 describe('ui.grid.expandable', function () {
 
+  var scope;
+
   beforeEach(module('ui.grid.expandable'));
 
-  describe('initialize', function() {
+  beforeEach(inject(function (_$compile_, $rootScope, $timeout, $httpBackend) {
 
-    it('should have pinning enabled', function() {
-      expect(true).toBe(true);
+    var $compile = _$compile_;
+    scope = $rootScope;
+
+    scope.gridOptions = {};
+    scope.gridOptions.data = [
+      { col1: 'col1', col2: 'col2' }
+    ];
+    scope.gridOptions.expandable = {
+      rowExpandableTemplate: 'rowExpandableTemplate.html',
+      expandableRowHeight: 150
+    };
+    scope.gridOptions.onRegisterApi = function (gridApi) {
+      scope.gridApi = gridApi;
+      scope.grid = gridApi.grid;
+    };
+
+    $httpBackend.when('GET', 'rowExpandableTemplate.html').respond("dummy");
+    var element = angular.element('<div class="col-md-5" ui-grid="gridOptions" ui-grid-expandable></div>');
+
+    $timeout(function () {
+      $compile(element)(scope);
     });
+    $timeout.flush();
+  }));
 
+  it('public api expandable should be well defined', function () {
+    expect(scope.gridApi.expandable).toBeDefined();
+    expect(scope.gridApi.expandable.on.rowExpandedStateChanged).toBeDefined();
+    expect(scope.gridApi.expandable.raise.rowExpandedStateChanged).toBeDefined();
+    expect(scope.gridApi.expandable.toggleRowExpansion).toBeDefined();
+    expect(scope.gridApi.expandable.expandAllRows).toBeDefined();
+    expect(scope.gridApi.expandable.collapseAllRows).toBeDefined();
   });
 
+  it('expandAll and collapseAll should set and unset row.isExpanded', function () {
+    scope.gridApi.expandable.expandAllRows();
+    scope.grid.renderContainers.body.visibleRowCache.forEach(function(row) {
+      expect(row.isExpanded).toBe(true);
+    });
+    scope.gridApi.expandable.collapseAllRows();
+    scope.grid.renderContainers.body.visibleRowCache.forEach(function(row) {
+      expect(row.isExpanded).toBe(false);
+    });
+  });
+
+  it('event rowExpandedStateChanged should be fired whenever row expands', function () {
+    var functionCalled = false;
+    scope.gridApi.expandable.on.rowExpandedStateChanged(scope,function(row){
+      functionCalled = true;
+    });
+    scope.gridApi.expandable.toggleRowExpansion(scope.grid.renderContainers.body.visibleRowCache[0].entity);
+    expect(functionCalled).toBe(true);
+  });
 });

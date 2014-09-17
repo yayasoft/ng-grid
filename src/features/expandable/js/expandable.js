@@ -88,13 +88,12 @@
     }]);
 
   module.directive('uiGridExpandableRow',
-  ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants','gridUtil','$interval','debounce',
-    function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants, gridUtil, $interval, debounce) {
+  ['uiGridExpandableService', '$timeout', '$log', '$compile', 'uiGridConstants','gridUtil','$interval',
+    function (uiGridExpandableService, $timeout, $log, $compile, uiGridConstants, gridUtil, $interval) {
 
       return {
         replace: false,
         priority: 0,
-        require: '^uiGrid',
         scope: false,
 
         compile: function () {
