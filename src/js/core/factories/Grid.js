@@ -283,7 +283,7 @@ angular.module('ui.grid')
   * @description adds a row header column to the grid
   * @param {object} column def
   */
-  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, index) {
+  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef) {
     var self = this;
     //self.createLeftContainer();
     var rowHeaderCol = new GridColumn(colDef, self.rowHeaderColumns.length + 1, self);
