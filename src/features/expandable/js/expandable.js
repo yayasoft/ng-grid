@@ -75,8 +75,7 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-              var expandableRowHeaderColDef = { name: 'expandableButtons', displayName: '', width: 40,
-                enableColumnMenu: false };
+              var expandableRowHeaderColDef = {name: 'expandableButtons', width: 40};
               expandableRowHeaderColDef.cellTemplate = $templateCache.get('ui-grid/expandableRowHeader');
               uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef, 0);
               uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
@@ -101,7 +100,7 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-              gridUtil.getTemplate($scope.grid.options.rowExpandableTemplate).then(
+              gridUtil.getTemplate($scope.grid.options.expandable.rowExpandableTemplate).then(
                 function (template) {
                   var expandedRowElement = $compile(template)($scope);
                   $elm.append(expandedRowElement);
